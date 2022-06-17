@@ -54,7 +54,7 @@ jobs:
           context: images/php
           build-args: |
             PHP_VERSION=${{ matrix.php }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ matrix.php }}
+          tags: ${{ steps.meta.outputs.tags }}
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
