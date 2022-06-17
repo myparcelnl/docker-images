@@ -2,6 +2,8 @@ ARG PHP_VERSION=7.2
 
 FROM php:${PHP_VERSION}-alpine AS base
 
+LABEL org.opencontainers.image.description='Alpine image with php, composer 2 and XDebug.'
+
 RUN apk update && \
     apk add --no-cache \
         composer \
@@ -15,4 +17,4 @@ RUN apk update && \
     echo 'xdebug.mode = coverage' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
     echo 'xdebug.client_host = host.docker.internal' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini
 
-LABEL org.opencontainers.image.description='Alpine image with php, composer 2 and XDebug.'
+WORKDIR /app
