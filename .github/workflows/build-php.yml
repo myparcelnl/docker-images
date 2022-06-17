@@ -58,5 +58,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           push: true
           platforms: ${{ matrix.architecture }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=build-${{ matrix.php }}-${{ matrix.architecture }}
+          cache-to: type=gha,scope=build-${{ matrix.php }}-${{ matrix.architecture }},mode=max
