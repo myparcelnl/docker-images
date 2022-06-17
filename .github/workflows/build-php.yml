@@ -6,8 +6,9 @@ on:
       - main
 
     paths:
-      - .github/workflows/build-php.yml
       - images/php/**/*
+
+  workflow_dispatch:
 
 permissions:
   contents: read
