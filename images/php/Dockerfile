@@ -14,3 +14,5 @@ RUN apk update && \
     touch /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
     echo 'xdebug.mode = coverage' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
     echo 'xdebug.client_host = host.docker.internal' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini
+
+LABEL org.opencontainers.image.description='Alpine image with php, composer 2 and XDebug.'
