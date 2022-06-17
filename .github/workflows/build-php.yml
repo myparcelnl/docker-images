@@ -22,6 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
         architecture: [ 'linux/amd64', 'linux/arm64' ]
