@@ -25,7 +25,6 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
-        architecture: [ 'linux/amd64', 'linux/arm64' ]
     steps:
       - uses: actions/checkout@v3
 
@@ -58,6 +57,6 @@ jobs:
             PHP_VERSION=${{ matrix.php }}
           tags: ${{ steps.meta.outputs.tags }}
           push: true
-          platforms: ${{ matrix.architecture }}
-          cache-from: type=gha,scope=build-${{ matrix.php }}-${{ matrix.architecture }}
-          cache-to: type=gha,scope=build-${{ matrix.php }}-${{ matrix.architecture }},mode=max
+          platforms: 'linux/amd64,linux/arm64'
+          cache-from: type=gha,scope=build-${{ matrix.php }}
+          cache-to: type=gha,scope=build-${{ matrix.php }},mode=max
