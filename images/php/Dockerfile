@@ -1,6 +1,8 @@
-ARG PHP_VERSION=7.2
+ARG PHP_VERSION="7.2"
+ARG ALPINE_VERSION=""
+ARG TYPE=""
 
-FROM php:${PHP_VERSION}-alpine AS base
+FROM php:${PHP_VERSION}${TYPE}-alpine${ALPINE_VERSION} AS base
 
 LABEL org.opencontainers.image.description='Alpine image with php, composer 2 and XDebug.'
 
