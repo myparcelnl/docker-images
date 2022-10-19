@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "identifier=${{ matrix.php }}${{ matrix.type }}-alpine${{ matrix.alpine }}" >> $GITHUB_OUTPUT
 
-      - uses: docker/metadata-action@v3
+      - uses: docker/metadata-action@v4
         id: meta
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
