@@ -56,7 +56,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ steps.prepare.outputs.identifier }}
             type=sha,suffix=-${{ steps.prepare.outputs.identifier }}
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v4
         continue-on-error: true
         with:
           context: images/php
