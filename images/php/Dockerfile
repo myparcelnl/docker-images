@@ -20,6 +20,7 @@ RUN XDEBUG_SUFFIX=$( [[ $(php -r "echo PHP_MAJOR_VERSION;") -lt 8 ]] && echo '-3
     pecl install xdebug$XDEBUG_SUFFIX && \
     docker-php-ext-enable xdebug && \
     touch /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
+    echo 'xdebug.mode = off' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
     echo 'xdebug.client_host = host.docker.internal' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
     # Install and configure pcov
     pecl install pcov && \
