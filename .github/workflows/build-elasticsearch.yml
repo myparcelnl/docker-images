@@ -1,0 +1,70 @@
+name: 'Build Elasticsearch images'
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - images/elasticsearch/**/*
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: myparcel/elasticsearch
+  UBUNTU_DISTRIB_CODENAME: focal
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        es-version: [ '6.8.23', '6.8.22', '6.8.21', '6.8.20' ]
+    steps:
+      - uses: actions/checkout@v3
+
+      # Login to the Docker Hub
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Setup QEMU for cross-architecture builds
+      - uses: docker/setup-qemu-action@v2
+
+      - uses: docker/setup-buildx-action@v2
+
+      - name: "Prepare identifier to be used in the Docker image's tags"
+        id: prepare
+        run: |
+          echo "identifier=${{ matrix.es-version }}" >> $GITHUB_OUTPUT
+
+      - uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=latest,suffix=-${{ steps.prepare.outputs.identifier }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=${{ steps.prepare.outputs.identifier }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=ref,event=branch,suffix=-${{ steps.prepare.outputs.identifier }}
+            type=ref,event=tag,suffix=-${{ steps.prepare.outputs.identifier }}
+            type=ref,event=pr,suffix=-${{ steps.prepare.outputs.identifier }}
+            type=sha,suffix=-${{ steps.prepare.outputs.identifier }}
+
+      - uses: docker/build-push-action@v3
+        continue-on-error: true
+        with:
+          context: images/elasticsearch
+          build-args: |
+            ES_VERSION=${{ matrix.es-version }}
+            UBUNTU_DISTRIB_CODENAME=${{ env.UBUNTU_DISTRIB_CODENAME }}
+          tags: ${{ steps.meta.outputs.tags }}
+          push: true
+          platforms: 'linux/amd64,linux/arm64'
+          cache-from: type=gha,scope=build-${{ steps.prepare.outputs.identifier }}
+          cache-to: type=gha,scope=build-${{ steps.prepare.outputs.identifier }},mode=max
