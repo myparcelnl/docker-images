@@ -21,10 +21,16 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      ES_LATEST_VERSION: '6.8.23'
     strategy:
       fail-fast: false
       matrix:
-        es-version: [ '6.8.23', '6.8.22', '6.8.21', '6.8.20' ]
+        es-version:
+          - '6.8.23'
+          - '6.8.22'
+          - '6.8.21'
+          - '6.8.20'
     steps:
       - uses: actions/checkout@v3
 
@@ -39,22 +45,28 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      - name: "Prepare identifier to be used in the Docker image's tags"
+      - name: 'Split version into major and minor'
         id: prepare
         run: |
-          echo "identifier=${{ matrix.es-version }}" >> $GITHUB_OUTPUT
+          echo "minor=$(echo ${{ matrix.es-version }} | cut -d. -f1-2)" >> $GITHUB_OUTPUT
+          echo "major=$(echo ${{ matrix.es-version }} | cut -d. -f1)" >> $GITHUB_OUTPUT
 
       - uses: docker/metadata-action@v4
         id: meta
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw,value=latest,suffix=-${{ steps.prepare.outputs.identifier }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=${{ steps.prepare.outputs.identifier }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=ref,event=branch,suffix=-${{ steps.prepare.outputs.identifier }}
-            type=ref,event=tag,suffix=-${{ steps.prepare.outputs.identifier }}
-            type=ref,event=pr,suffix=-${{ steps.prepare.outputs.identifier }}
-            type=sha,suffix=-${{ steps.prepare.outputs.identifier }}
+            # Tags for main branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
+            type=raw,value=${{ steps.prepare.outputs.major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
+            type=raw,value=${{ steps.prepare.outputs.minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
+            type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
+            
+            # Tags for branches, tags and pull requests
+            type=ref,event=branch,suffix=-${{ matrix.es-version }}
+            type=ref,event=tag,suffix=-${{ matrix.es-version }}
+            type=ref,event=pr,suffix=-${{ matrix.es-version }}
+            type=sha,suffix=-${{ matrix.es-version }}
 
       - uses: docker/build-push-action@v3
         continue-on-error: true
@@ -66,5 +78,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           push: true
           platforms: 'linux/amd64,linux/arm64'
-          cache-from: type=gha,scope=build-${{ steps.prepare.outputs.identifier }}
-          cache-to: type=gha,scope=build-${{ steps.prepare.outputs.identifier }},mode=max
+          cache-from: type=gha,scope=build-${{ matrix.es-version }}
+          cache-to: type=gha,scope=build-${{ matrix.es-version }},mode=max
