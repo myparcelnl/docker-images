@@ -15,17 +15,21 @@ permissions:
   packages: write
 
 env:
-  IMAGE: myparcel/elasticsearch
-  UBUNTU_DISTRIB_CODENAME: focal
+  DOCKER_CACHE_FROM:       'type=gha,scope=build-${{ matrix.es-version }}'
+  DOCKER_CACHE_TO:         'type=gha,scope=build-${{ matrix.es-version }},mode=max'
+  DOCKER_DEFAULT_PLATFORM: 'linux/amd64,linux/arm64'
+  IMAGE:                   'myparcel/elasticsearch'
+  UBUNTU_DISTRIB_CODENAME: 'focal'
 
 jobs:
   build-elasticsearch:
     name: 'Build Elasticsearch images'
     runs-on: ubuntu-22.04
+    if: ${{ !env.ACT || matrix.latest }}
     strategy:
       fail-fast: false
       matrix:
-        es-version: [ '6.8.22', '6.8.21', '6.8.20' ]
+        es-version: [ '6.8.20', '6.8.21', '6.8.22' ]
         include:
           - es-version: '6.8.23'
             latest: true
@@ -36,17 +40,20 @@ jobs:
 
       # Login to the Docker Hub
       - uses: docker/login-action@v2
+        if: ${{ !env.ACT }}  # Don't run when using `act`.
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Setup QEMU for cross-architecture builds
       - uses: docker/setup-qemu-action@v2
+        if: ${{ !env.ACT }}  # Don't run when using `act`.
 
       - uses: docker/setup-buildx-action@v2
 
-      - uses: docker/metadata-action@v4
+      - uses: docker/metadata-action@v2
         id: meta
+        if: ${{ !env.ACT }}  # Don't run when using `act`.
         with:
           images: ${{ env.IMAGE }}
           tags: |
@@ -62,14 +69,15 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.es-version }}
             type=sha,suffix=-${{ matrix.es-version }}
 
-      - uses: docker/build-push-action@v4
+      - uses: docker/build-push-action@v2
         with:
           context: images/elasticsearch
           build-args: |
             ES_VERSION=${{ matrix.es-version }}
             UBUNTU_DISTRIB_CODENAME=${{ env.UBUNTU_DISTRIB_CODENAME }}
           tags: ${{ steps.meta.outputs.tags }}
-          push: true
-          platforms: 'linux/amd64,linux/arm64'
-          cache-from: type=gha,scope=build-${{ matrix.es-version }}
-          cache-to: type=gha,scope=build-${{ matrix.es-version }},mode=max
+          push: ${{ !env.ACT }}  # Don't push when using `act`,
+          load: ${{ env.ACT }}   # instead load the image into the Docker daemon.
+          platforms: ${{ env.DOCKER_DEFAULT_PLATFORM }}
+          cache-from: ${{ env.DOCKER_CACHE_FROM }}
+          cache-to: ${{ env.DOCKER_CACHE_TO }}
