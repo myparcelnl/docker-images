@@ -19,7 +19,8 @@ env:
   UBUNTU_DISTRIB_CODENAME: focal
 
 jobs:
-  build:
+  build-elasticsearch:
+    name: 'Build Elasticsearch images'
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
