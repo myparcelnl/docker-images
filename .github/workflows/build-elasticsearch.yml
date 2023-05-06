@@ -62,7 +62,6 @@ jobs:
             type=sha,suffix=-${{ matrix.es-version }}
 
       - uses: docker/build-push-action@v3
-        continue-on-error: true
         with:
           context: images/elasticsearch
           build-args: |
