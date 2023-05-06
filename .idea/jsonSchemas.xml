@@ -19,6 +19,9 @@
                   <Item>
                     <option name="path" value=".github/workflows/build-php.yml" />
                   </Item>
+                  <Item>
+                    <option name="path" value=".github/workflows/build-elasticsearch.yml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
