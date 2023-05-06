@@ -21,16 +21,15 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    env:
-      ES_LATEST_VERSION: '6.8.23'
     strategy:
       fail-fast: false
       matrix:
-        es-version:
-          - '6.8.23'
-          - '6.8.22'
-          - '6.8.21'
-          - '6.8.20'
+        es-version: [ '6.8.22', '6.8.21', '6.8.20' ]
+        include:
+          - es-version: '6.8.23'
+            latest: true
+            es-major: 6
+            es-minor: 6.8
     steps:
       - uses: actions/checkout@v3
 
@@ -45,21 +44,15 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      - name: 'Split version into major and minor'
-        id: prepare
-        run: |
-          echo "minor=$(echo ${{ matrix.es-version }} | cut -d. -f1-2)" >> $GITHUB_OUTPUT
-          echo "major=$(echo ${{ matrix.es-version }} | cut -d. -f1)" >> $GITHUB_OUTPUT
-
       - uses: docker/metadata-action@v4
         id: meta
         with:
           images: ${{ env.IMAGE }}
           tags: |
             # Tags for main branch
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
-            type=raw,value=${{ steps.prepare.outputs.major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
-            type=raw,value=${{ steps.prepare.outputs.minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-version == env.ES_LATEST_VERSION }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && matrix.latest }}
+            type=raw,value=${{ matrix.es-major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-major }}
+            type=raw,value=${{ matrix.es-minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-minor }}
             type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
             
             # Tags for branches, tags and pull requests
