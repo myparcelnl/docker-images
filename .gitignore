@@ -24,6 +24,10 @@
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+### Act (GitHub Action Runner) ###
+/.act/artifact
+/.act/cache
+/.docker/cache
 
 ### macOS ###
 # General
