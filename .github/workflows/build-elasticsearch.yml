@@ -86,7 +86,6 @@ jobs:
             type=ref,event=branch,suffix=-${{ matrix.es-version }}
             type=ref,event=tag,suffix=-${{ matrix.es-version }}
             type=ref,event=pr,suffix=-${{ matrix.es-version }}
-            type=sha,suffix=-${{ matrix.es-version }}
 
       - uses: docker/build-push-action@v3
         with:
