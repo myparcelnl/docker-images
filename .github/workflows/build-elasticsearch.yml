@@ -83,7 +83,7 @@ jobs:
             type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
             
             # Tags for branches, tags and pull requests
-            type=ref,event=branch,suffix=-${{ matrix.es-version }}
+            type=ref,event=branch,suffix=-${{ matrix.es-version }},enable=${{ github.ref != 'refs/heads/main' }}
             type=ref,event=tag,suffix=-${{ matrix.es-version }}
             type=ref,event=pr,suffix=-${{ matrix.es-version }}
 
