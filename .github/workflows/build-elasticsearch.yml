@@ -14,6 +14,7 @@ permissions:
   packages: write
 
 env:
+  ACT:                     false
   # Encapsulate the variables in a `vars` object to prevent them from being parsed.
   DOCKER_CACHE_FROM:       "${{ 'type=gha,scope=build-${{ matrix.es-version }}' }}"
   DOCKER_CACHE_TO:         "${{ 'type=gha,scope=build-${{ matrix.es-version }},mode=max' }}"
@@ -69,7 +70,7 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      - uses: docker/metadata-action@v2
+      - uses: docker/metadata-action@v3
         id: meta
         if: ${{ !env.ACT }}  # Don't run when using `act`.
         with:
@@ -87,7 +88,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.es-version }}
             type=sha,suffix=-${{ matrix.es-version }}
 
-      - uses: docker/build-push-action@v2
+      - uses: docker/build-push-action@v3
         with:
           context: images/elasticsearch
           build-args: |
