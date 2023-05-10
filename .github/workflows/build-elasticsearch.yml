@@ -50,8 +50,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
-    env:
-      is_main: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v3
 
@@ -75,10 +73,10 @@ jobs:
           images: ${{ env.IMAGE }}
           tags: |
             # Tags for main branch
-            type=raw,value=latest,enable=${{ env.is_main && matrix.latest }}
-            type=raw,value=${{ matrix.es-major }},enable=${{ env.is_main && matrix.es-major }}
-            type=raw,value=${{ matrix.es-minor }},enable=${{ env.is_main && matrix.es-minor }}
-            type=raw,value=${{ matrix.es-version }},enable=${{ env.is_main }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && matrix.latest }}
+            type=raw,value=${{ matrix.es-major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-major }}
+            type=raw,value=${{ matrix.es-minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-minor }}
+            type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
             
             # Tags for branches, tags and pull requests
             type=ref,event=branch,suffix=-${{ matrix.es-version }}
