@@ -20,8 +20,8 @@ env:
   DOCKER_DEFAULT_PLATFORM: 'linux/amd64,linux/arm64'
   IMAGE:                   'myparcel/elasticsearch'
   UBUNTU_DISTRIB_CODENAME: 'focal'
-  # language=json
-  MATRIX: |
+  #language=json
+  ES_MATRIX: |-
     {
       "es-version": [ "6.8.20", "6.8.21", "6.8.22" ],
       "include": [
@@ -35,12 +35,21 @@ env:
     }
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-22.04
+    outputs: { matrix: '${{ steps.set-matrix.outputs.matrix }}' }
+    steps:
+      - id: set-matrix
+        #language=bash
+        run: echo "matrix=${ES_MATRIX//$'\n'}" >> $GITHUB_OUTPUT
+
   build-elasticsearch:
     name: 'Build Elasticsearch images'
+    needs: set-matrix
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(env.MATRIX) }}
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     env:
       is_main: ${{ github.ref == 'refs/heads/main' }}
     steps:
