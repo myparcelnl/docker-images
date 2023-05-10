@@ -96,7 +96,7 @@ jobs:
             ES_VERSION=${{ matrix.es-version }}
             UBUNTU_DISTRIB_CODENAME=${{ env.UBUNTU_DISTRIB_CODENAME }}
           tags:       ${{ steps.meta.outputs.tags }}
-          push:       ${{ !env.ACT }}  # Don't push when using `act`,
+          push:       ${{ env.ACT == false }}  # Don't push when using `act`,
           load:       ${{ env.ACT }}   # instead load the image into the Docker daemon.
           platforms:  ${{ env.DOCKER_BUILD_PLATFORMS }}
           cache-from: type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_SOURCE }}${{ matrix.es-version }}
