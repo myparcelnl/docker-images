@@ -24,12 +24,15 @@ env:
   ES_MATRIX: |-
     {
       "es-version": [ "6.8.20", "6.8.21", "6.8.22" ],
+      "es-minor": [ "" ],        
+      "es-major": [ "" ],
+      "latest": [ false ],
       "include": [
         {
           "es-version": "6.8.23",
-          "latest": true,
+          "es-minor": "6.8",
           "es-major": "6",
-          "es-minor": "6.8"
+          "latest": true
         }
       ]
     }
@@ -74,8 +77,8 @@ jobs:
           tags: |
             # Tags for main branch
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' && matrix.latest }}
-            type=raw,value=${{ matrix.es-major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-major }}
-            type=raw,value=${{ matrix.es-minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-minor }}
+            type=raw,value=${{ matrix.es-major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-major != '' }}
+            type=raw,value=${{ matrix.es-minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-minor != '' }}
             type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
             
             # Tags for branches, tags and pull requests
