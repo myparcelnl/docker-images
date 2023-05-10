@@ -15,8 +15,8 @@ permissions:
   packages: write
 
 env:
-  DOCKER_CACHE_FROM:       'type=gha,scope=build-${{ matrix.es-version }}'
-  DOCKER_CACHE_TO:         'type=gha,scope=build-${{ matrix.es-version }},mode=max'
+  DOCKER_CACHE_FROM:       'type=gha,scope=build-\${{ matrix.es-version }}'
+  DOCKER_CACHE_TO:         'type=gha,scope=build-\${{ matrix.es-version }},mode=max'
   DOCKER_DEFAULT_PLATFORM: 'linux/amd64,linux/arm64'
   IMAGE:                   'myparcel/elasticsearch'
   UBUNTU_DISTRIB_CODENAME: 'focal'
