@@ -15,6 +15,7 @@ permissions:
   packages: write
 
 env:
+  ACT:                     false
   # Encapsulate the variables in a `vars` object to prevent them from being parsed.
   DOCKER_CACHE_FROM:       "${{ 'type=gha,scope=build-${{ matrix.es-version }}' }}"
   DOCKER_CACHE_TO:         "${{ 'type=gha,scope=build-${{ matrix.es-version }},mode=max' }}"
