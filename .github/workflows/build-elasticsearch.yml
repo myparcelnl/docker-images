@@ -15,7 +15,6 @@ permissions:
   packages: write
 
 env:
-  ACT:                     false
   # Encapsulate the variables in a `vars` object to prevent them from being parsed.
   DOCKER_CACHE_FROM:       "${{ 'type=gha,scope=build-${{ matrix.es-version }}' }}"
   DOCKER_CACHE_TO:         "${{ 'type=gha,scope=build-${{ matrix.es-version }},mode=max' }}"
@@ -27,7 +26,7 @@ jobs:
   build-elasticsearch:
     name: 'Build Elasticsearch images'
     runs-on: ubuntu-22.04
-    if: ${{ !env.ACT || matrix.latest }}
+    if: ${{ !github.event.act || matrix.latest }}
     strategy:
       fail-fast: false
       matrix:
