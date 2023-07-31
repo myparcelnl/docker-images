@@ -6,37 +6,35 @@ FROM php:${PHP_VERSION}${TYPE}-alpine${ALPINE_VERSION} AS base
 
 LABEL org.opencontainers.image.description='Alpine image with php, composer 2, XDebug and pcov.'
 
-COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
-
-RUN apk update && \
+RUN if [ $(php -r "echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;") = "71" ]; then \
+        export COMPOSER_VERSION="2.2.0"; \
+        export XDEBUG_VERSION="2.9.8"; \
+    else \
+        export COMPOSER_VERSION="2.5.3"; \
+        export XDEBUG_VERSION=""; \
+        if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+            export XDEBUG_VERSION="3.1.6"; \
+        fi \
+    fi && \
+    apk update && \
     # Install dependencies
     apk add --no-cache --virtual .build-deps \
       make \
       linux-headers \
       $PHPIZE_DEPS \
     && \
-    # Install and configure xdebug
-    # php 7.1
-    if [ $(php -r "echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;") = "71" ]; then \
-        pecl install xdebug-2.9.8; \
-        # Enable xdebug 2
-        docker-php-ext-enable xdebug && \
-        # Configure xdebug 2
-        touch /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
+    # Install composer
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} && \
+    # Install xdebug
+    pecl install xdebug${XDEBUG_VERSION:+-${XDEBUG_VERSION}} && \
+    docker-php-ext-enable xdebug && \
+    touch /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
+    # Configure XDebug
+    if [ "${XDEBUG_VERSION:0:1}" = "2" ]; then \
         echo 'xdebug.remote_enable = 0' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
         echo 'xdebug.remote_autostart = 0' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
         echo 'xdebug.remote_host = host.docker.internal' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini; \
     else \
-        if [ $(php -r "echo PHP_MAJOR_VERSION;") -ge "8" ]; then \
-            # php 8+
-            pecl install xdebug; \
-        else \
-            # php 7.2+
-            pecl install xdebug-3.1.6; \
-        fi && \
-        # Enable xdebug 3
-        docker-php-ext-enable xdebug && \
-        # Configure xdebug 3
         touch /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
         echo 'xdebug.mode = off' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini && \
         echo 'xdebug.client_host = host.docker.internal' >> /usr/local/etc/php/conf.d/zzz-xdebug.ini; \
