@@ -1,4 +1,4 @@
-name: 'Build php images'
+name: 'Build php-xd images'
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
     paths:
-      - images/php/**/*
+      - images/php-xd/**/*
 
   workflow_dispatch:
 
@@ -59,7 +59,7 @@ jobs:
       - uses: docker/build-push-action@v3
         continue-on-error: true
         with:
-          context: images/php
+          context: images/php-xd
           build-args: |
             ALPINE_VERSION=${{ matrix.alpine }}
             PHP_VERSION=${{ matrix.php }}
