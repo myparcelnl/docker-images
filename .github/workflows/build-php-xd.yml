@@ -57,6 +57,7 @@ jobs:
             type=sha,suffix=-${{ steps.prepare.outputs.identifier }}
 
       - uses: docker/build-push-action@v3
+        name: build-push
         continue-on-error: true
         with:
           context: images/php-xd
@@ -69,3 +70,9 @@ jobs:
           platforms: 'linux/amd64,linux/arm64'
           cache-from: type=gha,scope=build-${{ steps.prepare.outputs.identifier }}
           cache-to: type=gha,scope=build-${{ steps.prepare.outputs.identifier }},mode=max
+
+      - name: 'Report success'
+        if: steps.build-push.outcome == 'success'
+        shell: bash
+        run: |
+          echo "- ✅ Built ${{ steps.prepare.outputs.identifier }}"
