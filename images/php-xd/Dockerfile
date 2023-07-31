@@ -32,7 +32,7 @@ RUN apk update && \
             pecl install xdebug; \
         else \
             # php 7.2+
-            pecl install xdebug-3.2.2; \
+            pecl install xdebug-3.1.6; \
         fi && \
         # Enable xdebug 3
         docker-php-ext-enable xdebug && \
