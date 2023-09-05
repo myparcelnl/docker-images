@@ -29,6 +29,11 @@ inputs:
     required: false
     default: 'false'
 
+  cache-mode:
+    description: 'Cache mode'
+    required: false
+    default: 'max'
+
 runs:
   using: composite
   steps:
@@ -58,19 +63,10 @@ runs:
         push: true
         platforms: 'linux/amd64,linux/arm64'
         cache-from: type=gha,scope=build-${{ inputs.suffix }}
-        cache-to: type=gha,scope=build-${{ inputs.suffix }},mode=max
+        cache-to: type=gha,scope=build-${{ inputs.suffix }},mode=${{ inputs.cache-mode }}
 
     - name: 'Report'
+      if: steps.build-push.outcome == 'success'
       shell: bash
       run: |
-        header="## Build summary"
-        status="${{ steps.build-push.outcome == 'success' && '✅' || '❌' }}"
-
-        if [[ ! -f $GITHUB_STEP_SUMMARY || ! $(grep -q "$header" $GITHUB_STEP_SUMMARY) ]]; then
-          echo "$header" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Status | Image | Suffix |" >> $GITHUB_STEP_SUMMARY
-          echo "| ------ | ----- | ------ |" >> $GITHUB_STEP_SUMMARY
-        fi
-
-        echo "| $status | ${{ inputs.image }} | ${{ inputs.suffix }} |" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Built ${{ inputs.image }}/${{ inputs.suffix }}" >> $GITHUB_STEP_SUMMARY

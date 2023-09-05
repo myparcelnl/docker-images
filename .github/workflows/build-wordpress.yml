@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2' ]
+        php: [ '8.2', '7.4' ]
         wp: ${{ fromJson(needs.prepare.outputs.wp-versions) }}
     steps:
       - uses: actions/checkout@v3
@@ -52,10 +52,11 @@ jobs:
       - uses: ./.github/actions/build-push
         with:
           registry: ghcr.io
+          cache-mode: 'min'
           context: images/wordpress
           image: myparcelnl/wordpress
           suffix: ${{ matrix.wp }}-php${{ matrix.php }}
-          latest: ${{ matrix.wp == needs.prepare.outputs.wp-latest }}
+          latest: ${{ matrix.wp == needs.prepare.outputs.wp-latest && matrix.php == '8.2' }}
           build-args: |
             PHP_VERSION=${{ matrix.php }}
             WP_VERSION=${{ matrix.wp }}
