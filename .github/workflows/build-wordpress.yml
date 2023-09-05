@@ -44,11 +44,6 @@ jobs:
         with:
           versions: ${{ steps.wp.outputs.versions }}
 
-      - uses: ./.github/actions/create-matrix
-        id: wp-matrix
-        with:
-          versions: ${{ steps.wp.outputs.versions }}
-
   build:
     runs-on: ubuntu-22.04
     needs:
