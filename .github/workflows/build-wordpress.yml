@@ -25,13 +25,15 @@ jobs:
   prepare:
     runs-on: ubuntu-22.04
     outputs:
-      wp-versions: ${{ steps.find-wp-versions.outputs.versions }}
+      wp-versions: ${{ steps.wp.outputs.versions }}
     steps:
-      - name: 'Get all WordPress versions as json'
-        id: find-wp-versions
+      - name: 'Get all WordPress versions as json array'
+        id: wp
         #language=bash
         run: |
-          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq '.offers[].version' | jq -sc 'unique | @json') 
+          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -rc '[.offers[].version] | unique'
+
+          echo "versions=$versions" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-22.04
