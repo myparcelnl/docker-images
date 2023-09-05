@@ -1,0 +1,41 @@
+name: 'Prepare php matrix'
+
+on:
+  workflow_call:
+    inputs:
+      min-version:
+        type: string
+        required: false
+        default: '0'
+
+      max-version:
+        type: string
+        required: false
+        default: 'infinite'
+
+    outputs:
+      matrix:
+        description: 'Matrix of versions'
+        value: ${{ jobs.create.outputs.matrix }}
+
+jobs:
+  create:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/create-matrix
+        id: matrix
+        with:
+          versions: |
+            8.2
+            8.1
+            8.0
+            7.4
+            7.3
+            7.2
+            7.1
+          min-version: ${{ inputs.min-version }}
+          max-version: ${{ inputs.max-version }}
