@@ -31,7 +31,7 @@ jobs:
         id: find-wp-versions
         #language=bash
         run: |
-          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq '.offers[].version' | jq -s -c 'unique')
+          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq '.offers[].version' | jq -sc 'unique | @json') 
 
   build:
     runs-on: ubuntu-22.04
