@@ -24,3 +24,23 @@ PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
 - 8.0 (latest XDebug 3)
 - 8.1 (latest XDebug 3)
 - 8.2 (latest XDebug 3)
+
+## wordpress
+
+[View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/wordpress)
+
+WordPress images based on `php-xd`.
+
+### Platforms
+
+- linux/amd64
+- linux/arm64
+
+### WordPress versions
+
+All versions returned by [the WordPress API](https://api.wordpress.org/core/version-check/1.7/).
+
+### PHP versions
+
+- 8.2
+- 7.4
