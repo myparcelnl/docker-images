@@ -22,14 +22,17 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       wp-versions: ${{ steps.wp.outputs.versions }}
+      wp-latest: ${{ steps.wp.outputs.latest }}
     steps:
       - name: 'Get all WordPress versions as json array'
         id: wp
         #language=bash
         run: |
-          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -rc '[.offers[].version] | unique')
+          result=$(curl -s https://api.wordpress.org/core/version-check/1.7/)
+          versions=$(echo "$result" | jq -rc '[.offers[].version] | unique | reverse')
 
-          echo "versions=$versions" >> $GITHUB_OUTPUT
+          echo "versions=$versions"                                 >> $GITHUB_OUTPUT
+          echo "latest=$(jq -r '.offers[0].version' <<< "$result")" >> $GITHUB_OUTPUT 
 
   build:
     runs-on: ubuntu-22.04
@@ -52,6 +55,7 @@ jobs:
           context: images/wordpress
           image: myparcelnl/wordpress
           suffix: ${{ matrix.wp }}-php${{ matrix.php }}
+          latest: ${{ matrix.wp == needs.prepare.outputs.wp-latest }}
           build-args: |
             PHP_VERSION=${{ matrix.php }}
             WP_VERSION=${{ matrix.wp }}

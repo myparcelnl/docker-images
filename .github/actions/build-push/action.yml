@@ -24,6 +24,11 @@ inputs:
     required: false
     default: ''
 
+  latest:
+    description: 'Whether to push the image with the `latest` tag'
+    required: false
+    default: 'false'
+
 runs:
   using: composite
   steps:
@@ -36,7 +41,7 @@ runs:
       with:
         images: ${{ inputs.registry }}/${{ inputs.image }}
         tags: |
-          type=raw,value=latest,suffix=-${{ inputs.suffix }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') && inputs.latest == 'true' }} 
           type=raw,value=${{ inputs.suffix }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
           type=ref,event=branch,suffix=-${{ inputs.suffix }}
           type=ref,event=tag,suffix=-${{ inputs.suffix }}
