@@ -14,6 +14,11 @@ inputs:
     description: 'Build context'
     required: true
 
+  registry:
+    description: 'Container registry'
+    required: false
+    default: 'ghcr.io'
+
   build-args:
     description: 'Build arguments'
     required: false
@@ -29,7 +34,7 @@ runs:
     - uses: docker/metadata-action@v4
       id: meta
       with:
-        images: ${{ inputs.registry }}/${{ inputs.suffix }}
+        images: ${{ inputs.registry }}/${{ inputs.image }}
         tags: |
           type=raw,value=latest,suffix=-${{ inputs.suffix }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
           type=raw,value=${{ inputs.suffix }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
@@ -54,13 +59,13 @@ runs:
       shell: bash
       run: |
         header="## Build and push `${{ inputs.image }}` summary"
-        
-        if ! grep -q "$header" $GITHUB_STEP_SUMMARY; then
+        status="${{ steps.build-push.outcome == 'success' && '✅' || '❌' }}"
+
+        if [[ ! -f $GITHUB_STEP_SUMMARY || ! $(grep -q "$header" $GITHUB_STEP_SUMMARY) ]]; then
           echo "$header" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Status | Image | Suffix |" >> $GITHUB_STEP_SUMMARY
           echo "| ------ | ----- | ------ |" >> $GITHUB_STEP_SUMMARY
         fi
-        
-        marker="${{ steps.build-push.outcome == 'success' && '✅' || '❌' }}"
-        echo "| ${marker} | ${{ inputs.image }} | ${{ inputs.suffix }} |" >> $GITHUB_STEP_SUMMARY
+
+        echo "| $status | ${{ inputs.image }} | ${{ inputs.suffix }} |" >> $GITHUB_STEP_SUMMARY
