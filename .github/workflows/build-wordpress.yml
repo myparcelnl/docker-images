@@ -25,13 +25,13 @@ jobs:
   prepare:
     runs-on: ubuntu-22.04
     outputs:
-      matrix: ${{ steps.find-versions.outputs.versions }}
+      wp-versions: ${{ steps.find-wp-versions.outputs.versions }}
     steps:
       - name: 'Get all WordPress versions as json'
-        id: find-versions
+        id: find-wp-versions
         #language=bash
         run: |
-          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq '[.offers[] | .version]')
+          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq '.offers[].version' | jq -s -c 'unique')
 
   build:
     runs-on: ubuntu-22.04
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2' ]
-        wp: ${{ fromJson(needs.prepare.outputs.matrix) }}
+        wp: ${{ fromJson(needs.prepare.outputs.wp-versions) }}
     steps:
       - uses: actions/checkout@v3
 
