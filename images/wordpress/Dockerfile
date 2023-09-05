@@ -77,6 +77,13 @@ ENV WP_VERSION=${WP_VERSION}
 ENV ROOT_DIR=${ROOT_DIR}
 
 ###
+# Core
+###
+ENV BASE_URL=localhost:8130
+ENV FULL_URL=https://${BASE_URL}
+ENV ROOT_DIR=/var/www/html
+
+###
 # Database
 ###
 ENV DB_HOST=db
