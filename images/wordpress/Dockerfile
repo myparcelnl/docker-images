@@ -57,8 +57,10 @@ RUN apk update && \
     npm cache clean --force && \
     yarn cache clean && \
     composer clear-cache && \
-    # Install envsubst
-    sh <(curl "https://raw.githubusercontent.com/EdieLemoine/envsubst/main/install.sh") v1.4.0 /usr/local/bin/envsubst && \
+    # Install envsubst \
+    curl "https://raw.githubusercontent.com/EdieLemoine/envsubst/main/install.sh" -o /tmp/install-envsubst.sh && \
+    sh /tmp/install-envsubst.sh v1.4.0 /usr/local/bin/envsubst && \
+    rm /tmp/install-envsubst.sh && \
     chmod +x /usr/local/bin/envsubst && \
     # Fix folders and permissions
     mkdir -p ./wp-content/plugins && \
