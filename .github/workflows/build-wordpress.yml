@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   prepare-php:
-    uses: ./.github/workflows/--prepare-php.yml@main
+    uses: ./.github/workflows/--prepare-php.yml
     secrets: inherit
     with:
       min-version: '8.2'
