@@ -27,7 +27,7 @@ jobs:
   prepare-wp:
     runs-on: ubuntu-22.04
     outputs:
-      wp-matrix: ${{ steps.wp-matrix.outputs.matrix }}
+      wp-matrix: ${{ steps.wp.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
 
@@ -35,24 +35,19 @@ jobs:
         id: wp
         #language=bash
         run: |
-          versions=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '[.offers[].version] | unique | .[]')
+          result=$(curl -s https://api.wordpress.org/core/version-check/1.7/)
+          versions=$(echo "$result" | jq -rc '[.offers[].version] | unique | reverse')
 
-          echo "versions=$versions" >> $GITHUB_OUTPUT
-
-      - uses: ./.github/actions/create-matrix
-        id: wp-matrix
-        with:
-          versions: ${{ steps.wp.outputs.versions }}
+          echo "matrix=$versions" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-22.04
     needs:
-      - prepare-php
       - prepare-wp
     strategy:
       fail-fast: false
       matrix:
-        php: ${{ fromJson(needs.prepare-php.outputs.matrix) }}
+        php: [ '8.2', '7.4' ]
         wp: ${{ fromJson(needs.prepare-wp.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
@@ -61,26 +56,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
-          echo ${{ toJson(matrix) }}
-          echo ${{ toJson(matrix.php) }}
-          echo ${{ toJson(matrix.wp) }}
-          
-          echo ${{ matrix }}
-          echo ${{ matrix.php }}
-          echo ${{ matrix.wp }}
-          
-          echo ${{ matrix.php.version }}
-          echo ${{ matrix.wp.version }}
-
-#      - uses: ./.github/actions/build-push
-#        with:
-#          registry: ghcr.io
-#          cache-mode: 'min'
-#          context: images/wordpress
-#          image: myparcelnl/wordpress
-#          suffix: ${{ matrix.wp }}-php${{ matrix.php }}
-#          latest: ${{ matrix.wp == needs.prepare.outputs.wp-latest && matrix.php == '8.2' }}
-#          build-args: |
-#            PHP_VERSION=${{ matrix.php }}
-#            WP_VERSION=${{ matrix.wp }}
+      - uses: ./.github/actions/build-push
+        with:
+          registry: ghcr.io
+          cache-mode: 'min'
+          context: images/wordpress
+          image: myparcelnl/wordpress
+          suffix: ${{ matrix.wp }}-php${{ matrix.php }}
+          build-args: |
+            PHP_VERSION=${{ matrix.php }}
+            WP_VERSION=${{ matrix.wp }}
