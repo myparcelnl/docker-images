@@ -63,7 +63,7 @@ runs:
     - name: 'Report'
       shell: bash
       run: |
-        header="## Build and push `${{ inputs.image }}` summary"
+        header="## Build summary"
         status="${{ steps.build-push.outcome == 'success' && '✅' || '❌' }}"
 
         if [[ ! -f $GITHUB_STEP_SUMMARY || ! $(grep -q "$header" $GITHUB_STEP_SUMMARY) ]]; then
