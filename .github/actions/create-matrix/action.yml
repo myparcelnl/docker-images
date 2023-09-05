@@ -33,12 +33,7 @@ runs:
         MAX_VERSION="${{ inputs.max-version }}"
 
         JSON=$(echo "${{ inputs.versions }}" | jq -Rsc 'split("\n") | sort | reverse | map(select(. >= "'$MIN_VERSION'" and . <= "'$MAX_VERSION'"))')
-
         LATEST=$(echo "$JSON" | jq -r '.[0]')
-
-        MATRIX=$(echo "$JSON" | jq -r \
-          --arg latest "$LATEST" \
-          'map({version: ., minor: (split(".") | .[0:2] | join(".")), major: (split(".") | .[0]), latest: (. == $latest)})'
-        )
+        MATRIX=$(echo "$JSON" | jq -r --arg latest "$LATEST" 'map({version: ., minor: (split(".") | .[0:2] | join(".")), major: (split(".") | .[0]), latest: (. == $latest)})')
 
         echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
