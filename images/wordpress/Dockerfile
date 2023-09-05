@@ -5,10 +5,7 @@ ARG PHP_VERSION="7.4"
 ##########
 FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-fpm-alpine AS wordpress
 
-ARG NODE_VERSION="16"
 ARG WP_VERSION="6.1.1"
-ARG XDEBUG_VERSION="3.1.6"
-ARG YARN_VERSION="3.3.0"
 
 ARG ROOT_DIR=/var/www/html
 
@@ -28,8 +25,8 @@ RUN apk update && \
       # Needed for database connection
       mysql-client \
       # Needed to build JS
-      "nodejs>${NODE_VERSION}" \
       npm \
+      nodejs \
       # Used to not have to switch user
       sudo && \
     # Install php extensions
@@ -75,10 +72,7 @@ COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
 COPY ./config/php       /usr/local/etc/php
 COPY ./config/wordpress /tmp/wordpress
 
-ENV NODE_VERSION=${NODE_VERSION}
 ENV WP_VERSION=${WP_VERSION}
-ENV XDEBUG_VERSION=${XDEBUG_VERSION}
-ENV YARN_VERSION=${YARN_VERSION}
 
 ENV ROOT_DIR=${ROOT_DIR}
 
