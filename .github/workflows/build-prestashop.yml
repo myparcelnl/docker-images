@@ -51,6 +51,7 @@ jobs:
       - uses: ./.github/actions/build-push
         with:
           registry: ghcr.io
+          cache-mode: 'min'
           context: images/prestashop
           image: myparcelnl/prestashop
           suffix: ${{ matrix.ps }}-php${{ matrix.php }}
