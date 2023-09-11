@@ -12,7 +12,8 @@ ARG ROOT_DIR=/var/www/html
 
 WORKDIR ${ROOT_DIR}
 
-RUN apk update && \
+RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
+    apk update && \
     # Install dependencies
     apk add --no-cache \
       # gd
@@ -36,11 +37,17 @@ RUN apk update && \
       git \
       $PHPIZE_DEPS \
     && \
-    # Configure php extensions
-    docker-php-ext-configure gd \
+    # Configure php extensions \
+    # if php version < 74 \
+    if [ "${PHP_VERSION}" -lt "74" ]; then \
+      docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/include/ \
+        --with-freetype-dir=/usr/include/; \
+    else \
+      docker-php-ext-configure gd \
       --with-jpeg \
-      --with-freetype \
-    && \
+      --with-freetype; \
+    fi && \
     # Install php extensions
     docker-php-ext-install \
       gd \
