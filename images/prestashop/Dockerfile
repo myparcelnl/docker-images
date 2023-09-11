@@ -38,7 +38,6 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
       $PHPIZE_DEPS \
     && \
     # Configure php extensions \
-    # if php version < 74 \
     if [ "${PHP_VERSION}" -lt "74" ]; then \
       docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/include/ \
