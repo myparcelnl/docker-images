@@ -19,7 +19,6 @@ COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/lib     /usr/local/lib
 
 ARG PS_VERSION="8.0.4"
-ARG YARN_VERSION="berry"
 
 ARG ROOT_DIR=/var/www/html
 
@@ -81,14 +80,8 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     rm -rf vendor && \
     # Set composer cache location
     composer config --global cache-dir /tmp/.cache/composer && \
-    # Set up Yarn
-    yarn set version ${YARN_VERSION} && \
-    yarn config set --home enableTelemetry 0 && \
-    yarn config set enableGlobalCache true && \
-    yarn config set globalFolder /tmp/.cache/yarn && \
-    yarn config set logFilters --json '[ {"code":"YN0060","level":"discard"}, {"code":"YN0002","level":"discard"} ]' && \
-    yarn config set nodeLinker node-modules && \
-    yarn plugin import workspace-tools && \
+    # Set npm cache location
+    npm config set cache /tmp/.cache/npm && \
     # Reset permissions
     chown -R www-data . && \
     # Clear cache and unnecessary dependencies
@@ -102,7 +95,6 @@ COPY ./config/php     /usr/local/etc/php
 COPY ./scripts/       /tmp/scripts
 
 ENV PS_VERSION=${PS_VERSION}
-ENV YARN_VERSION=${YARN_VERSION}
 
 ENV ROOT_DIR=${ROOT_DIR}
 
