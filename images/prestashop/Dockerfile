@@ -1,9 +1,22 @@
+ARG NODE_VERSION="16"
 ARG PHP_VERSION="8.1"
+
+##########
+# Node
+##########
+FROM node:${NODE_VERSION}-alpine AS node
+
 
 ##########
 # Prestashop
 ##########
 FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-fpm-alpine AS prestashop
+
+COPY --from=node /opt/              /opt/
+COPY --from=node /usr/lib           /usr/lib
+COPY --from=node /usr/local/bin     /usr/local/bin
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/lib     /usr/local/lib
 
 ARG PS_VERSION="8.0.4"
 ARG YARN_VERSION="berry"
@@ -28,9 +41,6 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
       sudo \
       # needed for wait-for-it
       bash \
-      # needed to build themes \
-      nodejs \
-      npm \
       # For parsing and editing json
       jq \
       # For cloning prestashop
@@ -72,7 +82,6 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     # Set composer cache location
     composer config --global cache-dir /tmp/.cache/composer && \
     # Set up Yarn
-    npm i -g yarn && \
     yarn set version ${YARN_VERSION} && \
     yarn config set --home enableTelemetry 0 && \
     yarn config set enableGlobalCache true && \
