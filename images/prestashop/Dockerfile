@@ -82,6 +82,8 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     composer config --global cache-dir /tmp/.cache/composer && \
     # Set npm cache location
     npm config set cache /tmp/.cache/npm && \
+    # Set yarn cache location
+    yarn config set cache-folder /tmp/.cache/yarn && \
     # Reset permissions
     chown -R www-data . && \
     # Clear cache and unnecessary dependencies
