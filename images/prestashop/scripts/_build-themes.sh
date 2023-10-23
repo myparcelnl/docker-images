@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-build-themes() {
-  h2 "Building themes..."
-
-  # Some super hacky changes needed to be able to compile the scss of admin-dev/themes/new-theme with sass^1 :(
+# Some super hacky changes needed to be able to compile the scss of admin-dev/themes/new-theme with sass^1 :(
+fix-files() {
   sed -i 's/@extend a:hover;/@extend a, :hover;/' './admin-dev/themes/new-theme/node_modules/prestakit/scss/_breadcrumb.scss' || true
   sed -i 's/@extend .btn-primary:disabled;/@extend .btn-primary, :disabled;/' './admin-dev/themes/new-theme/node_modules/prestakit/scss/_custom-forms.scss' || true
   sed -i 's/ - 2;/;/' './admin-dev/themes/new-theme/node_modules/select2-bootstrap-theme/src/select2-bootstrap.scss' || true
+}
+
+build-themes() {
+  h2 "Building themes..."
+
 
   if major-version-is 1; then
     yarn set version berry
@@ -35,6 +38,8 @@ build-themes() {
 
     yarn install
 
+    fix-files
+
     yarn workspaces foreach -pv exec npm pkg set "scripts.build:dev=NODE_ENV=development webpack --mode development"
     yarn workspaces foreach -pv run build:dev
 
@@ -57,6 +62,9 @@ build-themes() {
       npm pkg set devDependencies.sass=^1
 
       npm install --legacy-peer-deps
+
+      fix-files
+
       npm run build
 
       if [ "$?" -ne 0 ]; then
