@@ -38,7 +38,7 @@ Shopware images based on `php-xd`.
 
 ### Shopware versions
 
-6.5 (latest).
+- 6.5 (latest)
 
 ### PHP versions
 
