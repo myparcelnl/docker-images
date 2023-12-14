@@ -5,7 +5,7 @@ install-plugins() {
   link-paths "$TMP_PLUGINS_DIR" "$SW_PLUGINS_DIR"
 
   h2 "Refreshing plugins"
-  bin/console $verbosity plugin:refresh
+  bin/console "$verbosity" plugin:refresh
 
   for path in "$TMP_PLUGINS_DIR"/*/; do
     plugin=$(basename "$path")
@@ -20,7 +20,7 @@ install-plugins() {
     fi
 
     h2 "[plugin:$plugin] Installing and activating..."
-    bin/console plugin:install $verbosity --activate "$plugin"
+    bin/console plugin:install "$verbosity" --activate "$plugin"
   done
 
   build-plugin-assets

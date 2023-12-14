@@ -9,7 +9,7 @@ else
   export verbosity=-v
 fi
 
-for script in /tmp/scripts/_*; do source $script; done
+for script in /tmp/scripts/_*; do source "$script"; done
 
 # Start php fpm in the background in advance.
 start-php-fpm

@@ -17,7 +17,7 @@ install-shopware() {
   fi
 
   h2 "Running installation..."
-  php bin/console $verbosity system:install --basic-setup --create-database --force
+  php bin/console "$verbosity" system:install --basic-setup --create-database --force
 
   # if command failed
   if [ $? -ne 0 ]; then
