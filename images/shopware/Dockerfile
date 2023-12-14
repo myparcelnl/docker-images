@@ -14,7 +14,7 @@ ARG ROOT_DIR=/var/www/html
 
 WORKDIR ${ROOT_DIR}
 
-RUN apk upgrade && \
+RUN "apk upgrade" && \
     # Add dependencies
     apk add --no-cache \
       # ext-gd
