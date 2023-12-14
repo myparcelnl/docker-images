@@ -14,7 +14,7 @@ ARG ROOT_DIR=/var/www/html
 
 WORKDIR ${ROOT_DIR}
 
-RUN "apk upgrade" && \
+RUN apk upgrade && \
     # Add dependencies
     apk add --no-cache \
       # ext-gd
@@ -35,7 +35,7 @@ RUN "apk upgrade" && \
       # For building assets
       "nodejs>${NODE_VERSION}" \
       npm \
-      $PHPIZE_DEPS \
+      "$PHPIZE_DEPS" \
     && \
     docker-php-ext-configure gd \
       --with-jpeg \
@@ -58,13 +58,13 @@ RUN "apk upgrade" && \
     # Set composer cache directory
     composer config --global cache-dir /tmp/.cache/composer && \
     # Create Shopware project \
-    COMPOSER_MEMORY_LIMIT=-1 composer create-project shopware/production:${SW_VERSION} . && \
+    COMPOSER_MEMORY_LIMIT=-1 composer create-project shopware/production:"${SW_VERSION}" . && \
     # Remove default env files
     rm -f .env .env.dist && \
     touch .env .env.dist && \
     # Set up yarn
     npm i -g yarn && \
-    yarn set version ${YARN_VERSION} && \
+    yarn set version "${YARN_VERSION}" && \
     # Configure yarn \
     yarn config set --home enableTelemetry 0 && \
     yarn config set enableGlobalCache true && \
