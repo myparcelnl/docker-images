@@ -25,6 +25,26 @@ PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
 - 8.1 (latest XDebug 3)
 - 8.2 (latest XDebug 3)
 
+## shopware
+
+[View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/shopware)
+
+Shopware images based on `php-xd`.
+
+### Platforms
+
+- linux/amd64
+- linux/arm64
+
+### Shopware versions
+
+- 6.5 (latest)
+
+### PHP versions
+
+- 8.2
+- 8.1
+
 ## wordpress
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/wordpress)
