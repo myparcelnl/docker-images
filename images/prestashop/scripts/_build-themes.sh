@@ -10,9 +10,8 @@ fix-files() {
 build-themes() {
   h2 "Building themes..."
 
-
   if major-version-is 1; then
-    yarn set version berry
+    YARN_IGNORE_NODE=1 yarn set version 3.6.4
 
     yarn config set --home enableTelemetry 0
 
@@ -33,15 +32,18 @@ build-themes() {
     yarn config set nmHoistingLimits workspaces
 
     # Replace node-sass with sass in all workspaces
-    yarn remove -A node-sass
+    yarn workspaces foreach -pv --exclude root exec npm pkg delete \
+      devDependencies.node-sass \
+      dependencies.node-sass \
+      peerDependencies.node-sass
     yarn workspaces foreach -pv --exclude root exec npm pkg set devDependencies.sass=^1
 
     yarn install
 
     fix-files
 
-    yarn workspaces foreach -pv exec npm pkg set "scripts.build:dev=NODE_ENV=development webpack --mode development"
-    yarn workspaces foreach -pv run build:dev
+    yarn workspaces foreach -pv --exclude root exec npm pkg set "scripts.build:dev=NODE_ENV=development webpack --mode development"
+    yarn workspaces foreach -pv --exclude root run build:dev
 
     if [ "$?" -eq 0 ]; then
       h2 "Built themes."
