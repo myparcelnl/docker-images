@@ -57,7 +57,7 @@ build-themes() {
 
     for workspace in $workspaces; do
       cd "$workspace" || exit 1
-      h2 "Building $workspace..."
+      h2 "Installing $workspace..."
 
       npm pkg delete devDependencies.node-sass
       npm pkg delete dependencies.node-sass
@@ -65,7 +65,14 @@ build-themes() {
 
       npm install --legacy-peer-deps
 
-      fix-files
+      cd - || exit 1
+    done
+
+    fix-files
+
+    for workspace in $workspaces; do
+      cd "$workspace" || exit 1
+      h2 "Building $workspace..."
 
       npm run build
 
