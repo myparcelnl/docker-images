@@ -1,6 +1,6 @@
 # MyParcel Docker Images
 
-Docker images we use in our open source projects.
+Docker images we use in our open source projects. All images have `linux/amd64` and `linux/arm64` variants.
 
 ## Contents
 
@@ -9,11 +9,6 @@ Docker images we use in our open source projects.
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/php-xd)
 
 PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
-
-### Platforms
-
-- linux/amd64
-- linux/arm64
 
 ### PHP versions
 
@@ -25,16 +20,33 @@ PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
 - 8.1 (latest XDebug 3)
 - 8.2 (latest XDebug 3)
 
+## prestashop
+
+[View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/prestashop)
+
+PrestaShop images based on `php-xd`.
+
+> Example: `ghrc.io/myparcelnl/prestashop:8.0.1-php8.2`
+
+### PrestaShop versions
+
+All [tags in the `prestashop/prestashop` repository](https://api.github.com/repos/PrestaShop/PrestaShop/tags).
+
+### PHP versions
+
+- 7.1
+- 7.4
+- 8.0
+- 8.1
+- 8.2
+
 ## shopware
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/shopware)
 
 Shopware images based on `php-xd`.
 
-### Platforms
-
-- linux/amd64
-- linux/arm64
+> Example: `ghrc.io/myparcelnl/shopware:6.5-php8.2`
 
 ### Shopware versions
 
@@ -51,10 +63,7 @@ Shopware images based on `php-xd`.
 
 WordPress images based on `php-xd`.
 
-### Platforms
-
-- linux/amd64
-- linux/arm64
+> Example: `ghrc.io/myparcelnl/wordpress:6.2.2-php7.4`
 
 ### WordPress versions
 
@@ -62,5 +71,5 @@ All versions returned by [the WordPress API](https://api.wordpress.org/core/vers
 
 ### PHP versions
 
-- 8.2
 - 7.4
+- 8.2
