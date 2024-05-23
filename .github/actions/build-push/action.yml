@@ -51,7 +51,6 @@ runs:
           type=ref,event=branch,suffix=-${{ inputs.suffix }}
           type=ref,event=tag,suffix=-${{ inputs.suffix }}
           type=ref,event=pr,suffix=-${{ inputs.suffix }}
-          type=sha,suffix=-${{ inputs.suffix }}
 
     - uses: docker/build-push-action@v3
       name: build-push
