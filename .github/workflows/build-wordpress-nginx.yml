@@ -1,4 +1,4 @@
-name: 'Build wordpress images'
+name: 'Build wordpress nginx images'
 
 on:
   push:
@@ -35,3 +35,4 @@ jobs:
           cache-mode: 'min'
           context: images/wordpress-nginx
           image: myparcelnl/wordpress-nginx
+          latest: true
