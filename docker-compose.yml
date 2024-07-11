@@ -2,17 +2,36 @@ services:
   ###
   # Main php container
   #
-  # This container runs the php-fpm process and serves WordPress.
+  # This container runs the php-fpm process, optionally nginx, and serves Shopware.
   #
   # Requires the db container to be running.
   #
   # Contains:
-  #  - php-fpm, xdebug, composer
-  #  - WordPress installation (in volume web-data)
+  #  - php-fpm, nginx, xdebug, composer
+  #  - Shopware installation (in volume web-data)
   #  - Various tools: zsh, vim
   #
-  # See https://github.com/myparcelnl/docker-images/pkgs/container/wordpress
   ##
+  shopware:
+    image: ghcr.io/myparcelnl/shopware
+    build:
+      context: images/shopware
+      dockerfile: Dockerfile
+
+    ###
+    # Main php container
+    #
+    # This container runs the php-fpm process and serves WordPress.
+    #
+    # Requires the db container to be running.
+    #
+    # Contains:
+    #  - php-fpm, nginx, xdebug, composer
+    #  - WordPress installation (in volume web-data)
+    #  - Various tools: zsh, vim
+    #
+    # See https://github.com/myparcelnl/docker-images/pkgs/container/wordpress
+    ##
   wordpress:
     image: ghcr.io/myparcelnl/wordpress:6.3-php7.4
     build:
