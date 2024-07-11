@@ -24,5 +24,9 @@ fi
 
 reset-permissions
 
+if [ "${WITH_NGINX}" -eq 1 ]; then
+  start-nginx
+fi
+
 h1 "🔵 Shopware is ready at ${FULL_URL}/admin ✨"
 tail -f var/log/*.log & wait
