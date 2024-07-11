@@ -17,6 +17,8 @@ WORKDIR ${ROOT_DIR}
 RUN apk upgrade && \
     # Add dependencies
     apk add --no-cache \
+      # nginx for running on aws \
+      nginx \
       # ext-gd
       freetype-dev \
       libjpeg-turbo-dev \
@@ -35,7 +37,17 @@ RUN apk upgrade && \
       # For building assets
       "nodejs>${NODE_VERSION}" \
       npm \
-      "$PHPIZE_DEPS" \
+      # $PHPIZE_DEPS:
+      autoconf \
+      dpkg-dev \
+      dpkg \
+      file \
+      g++ \
+      gcc \
+      libc-dev \
+      make \
+      pkgconf \
+      re2c \
     && \
     docker-php-ext-configure gd \
       --with-jpeg \
@@ -106,7 +118,7 @@ RUN apk add --no-cache \
       zsh
 
 COPY ./config/.psh.yaml.override.template /tmp/.psh.yaml.override.template
-COPY ./config/nginx                       /etc/nginx
+COPY ./config/nginx/templates             /etc/nginx/templates
 COPY ./config/php                         /usr/local/etc/php
 COPY ./config/root                        .
 COPY ./scripts                            /tmp/scripts
