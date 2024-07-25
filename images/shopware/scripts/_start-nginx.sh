@@ -8,10 +8,9 @@ start-nginx() {
     return
   fi
 
-  chmod +w /etc/nginx/conf.d
   auto_envsubst # from _envsubst-on-templates.sh
 
-  nginx -D
+  nginx -g 'daemon off;'
 
   if [ "$?" -eq 0 ]; then
     h2 "Started nginx."

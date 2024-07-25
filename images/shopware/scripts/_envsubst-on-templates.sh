@@ -41,6 +41,9 @@ auto_envsubst() {
   local template defined_envs relative_path output_path subdir
   defined_envs=$(printf '${%s} ' $(awk "END { for (name in ENVIRON) { print ( name ~ /${filter}/ ) ? name : \"\" } }" < /dev/null ))
   [ -d "$template_dir" ] || return 0
+  if [ ! -d "$output_dir" ]; then
+    mkdir -p "$output_dir"
+  fi
   if [ ! -w "$output_dir" ]; then
     entrypoint_log "$ME: ERROR: $template_dir exists, but $output_dir is not writable"
     return 0
@@ -74,7 +77,3 @@ auto_envsubst() {
     done
   fi
 }
-
-auto_envsubst
-
-exit 0
