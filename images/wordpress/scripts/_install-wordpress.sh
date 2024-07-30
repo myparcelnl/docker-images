@@ -13,7 +13,7 @@ install-wordpress() {
   wait-for-it -q "$DB_HOST:$DB_PORT" -t 30
   h2 "Database is ready"
 
-  sudo -u www-data -s wp core download 2>/dev/null
+  sudo -u www-data -s wp core download
 
   sudo -u www-data -s wp config create --force
 
