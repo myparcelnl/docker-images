@@ -18,7 +18,9 @@ add-preset-data
 
 reset-permissions
 
-start-nginx
+if [ "${WITH_NGINX}" -eq 1 ]; then
+  start-nginx
+fi
 
 h1 "📝 WordPress is ready at ${FULL_URL} ✨"
 

@@ -8,7 +8,7 @@ start-nginx() {
     return
   fi
 
-  nginx -g 'daemon off;'
+  nginx;
 
   if [ "$?" -eq 0 ]; then
     h2 "Started nginx."

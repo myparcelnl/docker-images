@@ -74,7 +74,7 @@ COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
 COPY ./config/php       /usr/local/etc/php
 COPY ./config/wordpress /tmp/wordpress
 # Copy nginx config
-COPY ./etc/nginx/conf.d/* /etc/nginx/conf.d/
+COPY ./etc/nginx/http.d/* /etc/nginx/http.d/
 
 ENV WP_VERSION=${WP_VERSION}
 
