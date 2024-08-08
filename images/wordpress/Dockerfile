@@ -14,6 +14,8 @@ WORKDIR ${ROOT_DIR}
 RUN apk update && \
     # Install dependencies
     apk add --no-cache \
+      # To run in AWS
+      nginx \
       # Needed for php extensions
       $PHPIZE_DEPS \
       # needed for wait-for-it
@@ -71,6 +73,8 @@ COPY ./scripts/         /tmp/scripts
 COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
 COPY ./config/php       /usr/local/etc/php
 COPY ./config/wordpress /tmp/wordpress
+# Copy nginx config
+COPY ./etc/nginx/http.d/* /etc/nginx/http.d/
 
 ENV WP_VERSION=${WP_VERSION}
 

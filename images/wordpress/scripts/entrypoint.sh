@@ -18,6 +18,10 @@ add-preset-data
 
 reset-permissions
 
+if [ "${WITH_NGINX}" -eq 1 ]; then
+  start-nginx
+fi
+
 h1 "📝 WordPress is ready at ${FULL_URL} ✨"
 
 tail-logs

@@ -1,0 +1,20 @@
+services:
+  ###
+  # Main php container
+  #
+  # This container runs the php-fpm process and serves WordPress.
+  #
+  # Requires the db container to be running.
+  #
+  # Contains:
+  #  - php-fpm, xdebug, composer
+  #  - WordPress installation (in volume web-data)
+  #  - Various tools: zsh, vim
+  #
+  # See https://github.com/myparcelnl/docker-images/pkgs/container/wordpress
+  ##
+  wordpress:
+    image: ghcr.io/myparcelnl/wordpress:6.3-php7.4
+    build:
+      context: images/wordpress
+      dockerfile: Dockerfile

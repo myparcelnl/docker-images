@@ -28,11 +28,9 @@ link-paths() {
 
       # Ignore if path is not a directory.
       [ -d "${path}" ] || continue
-      # Overwrite existing symlinks.
-      unlink "$dest_path" 2> /dev/null
 
       h2 "Linking $path => $dest_path"
-      ln -sf "$path" "$dest_path"
+      ln -snf "$path" "$dest_path"
     done
   else
     h2 "No folders found in $source_dir"
