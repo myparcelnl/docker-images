@@ -37,8 +37,10 @@ jobs:
         run: |
           result=$(curl -s https://api.wordpress.org/core/version-check/1.7/)
           versions=$(echo "$result" | jq -rc '[.offers[].version] | unique | reverse')
+          latest=$(echo "$result" | jq -rc '[.offers[].version][0]')
 
           echo "matrix=$versions" >> $GITHUB_OUTPUT
+          echo "latest=$latest" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-22.04
@@ -62,6 +64,7 @@ jobs:
           cache-mode: 'min'
           context: images/wordpress
           image: myparcelnl/wordpress
+          latest: ${{ matrix.wp }} == ${{needs.prepare-wp.outputs.latest}} && ${{ matrix.php }} == '8.2'
           suffix: ${{ matrix.wp }}-php${{ matrix.php }}
           build-args: |
             PHP_VERSION=${{ matrix.php }}
