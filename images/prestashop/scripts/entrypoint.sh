@@ -20,5 +20,9 @@ reset-permissions
 
 tail-logs
 
+if [ "${WITH_NGINX}" -eq 1 ]; then
+  start-nginx
+fi
+
 h1 "🐧 PrestaShop is ready at ${FULL_URL} ✨"
 sleep infinity
