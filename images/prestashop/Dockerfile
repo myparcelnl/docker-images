@@ -33,6 +33,8 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     apk update && \
     # Install dependencies
     apk add --no-cache \
+      # To run in AWS \
+      nginx \
       # gd
       freetype-dev \
       libjpeg-turbo-dev \
@@ -98,6 +100,7 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
 COPY ./config/php-fpm /usr/local/etc/php-fpm.d
 COPY ./config/php     /usr/local/etc/php
 COPY ./scripts/       /tmp/scripts
+COPY ./etc/nginx/http.d                   /etc/nginx/http.d
 
 ENV PHP_VERSION=${PHP_VERSION}
 ENV PS_VERSION=${PS_VERSION}
