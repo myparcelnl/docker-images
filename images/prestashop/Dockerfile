@@ -18,7 +18,7 @@ COPY --from=node /usr/local/bin     /usr/local/bin
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/lib     /usr/local/lib
 
-ARG PS_VERSION="8.0.4"
+ARG PS_VERSION="8.0.5"
 
 ARG ROOT_DIR=/var/www/html
 
@@ -94,22 +94,19 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     composer clear-cache && \
     apk del git
 
-COPY ./config/php-fpm /usr/local/etc/php-fpm.d
-COPY ./config/php     /usr/local/etc/php
-COPY ./scripts/       /tmp/scripts
-COPY ./etc/nginx/http.d                   /etc/nginx/http.d
+COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
+COPY ./config/php       /usr/local/etc/php
+COPY ./scripts/         /tmp/scripts
+COPY ./etc/nginx/http.d /etc/nginx/http.d
 
 ENV PS_VERSION=${PS_VERSION}
-
-ENV ROOT_DIR=${ROOT_DIR}
-
 
 ###
 # Core
 ###
 ENV BASE_URL=prestashop.dev.myparcel.nl
 ENV FULL_URL=https://${BASE_URL}
-ENV ROOT_DIR=/var/www/html
+ENV ROOT_DIR=${ROOT_DIR}
 
 ###
 # Database
@@ -132,11 +129,11 @@ ENV PS_DB_CREATE=1
 ENV PS_ENABLE_SSL=1
 ENV PS_COUNTRY=NL
 ENV PS_LANGUAGE=en
-ENV PS_FOLDER_ADMIN=admin1
+ENV PS_FOLDER_ADMIN=admin-dev
 
 # Admin credentials
 ENV PS_ADMIN_MAIL=admin@${BASE_URL}
-ENV PS_ADMIN_PASSWORD=admin
+ENV PS_ADMIN_PASSWORD=admin123!
 
 
 ###
