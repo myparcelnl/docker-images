@@ -96,7 +96,8 @@ RUN version="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" \
     curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s "https://blackfire.io/api/v1/releases/probe/php/linux/$architecture/$version" && \
     tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire && \
     mv /tmp/blackfire/blackfire-*.so "$(php -r "echo ini_get ('extension_dir');")/blackfire.so" && \
-    rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
+    rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz && \
+    blackfire php:install
 
 # add utilities
 RUN apk add --no-cache \
