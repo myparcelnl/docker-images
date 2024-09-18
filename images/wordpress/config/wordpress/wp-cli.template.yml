@@ -22,9 +22,11 @@ config create:
 
     @ini_set('display_errors', ${DISPLAY_ERRORS:-0});
 
-    # SSL
-    define('FORCE_SSL_ADMIN', true);
-    $$_SERVER['HTTPS'] = 'on';
+    # Force SSL if the URL starts with https://
+    if (strpos('${WP_URL_REPLACE}', 'https://') === 0) {
+        define('FORCE_SSL_ADMIN', true);
+        $$_SERVER['HTTPS'] = 'on';
+    }
 
     # Other
     $$_SERVER['document_root'] = dirname(__FILE__);

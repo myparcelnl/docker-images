@@ -76,16 +76,19 @@ COPY ./config/wordpress /tmp/wordpress
 # Copy nginx config
 COPY ./etc/nginx/http.d/* /etc/nginx/http.d/
 
+ENV PHP_VERSION=${PHP_VERSION}
 ENV WP_VERSION=${WP_VERSION}
-
-ENV ROOT_DIR=${ROOT_DIR}
 
 ###
 # Core
 ###
 ENV BASE_URL=localhost:8130
 ENV FULL_URL=https://${BASE_URL}
-ENV ROOT_DIR=/var/www/html
+ENV ROOT_DIR=${ROOT_DIR}
+ENV WITH_NGINX=0
+
+ENV TMP_PLUGINS_DIR="/tmp/plugins"
+ENV WP_PLUGINS_DIR="${ROOT_DIR}/wp-content/plugins"
 
 ###
 # Database
