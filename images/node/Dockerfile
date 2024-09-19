@@ -16,6 +16,7 @@ WORKDIR /app
 
 RUN NODE_MAJOR_VERSION=$(echo "$NODE_VERSION" | cut -d. -f1) && \
     YARN_MAJOR_VERSION=$(echo "$YARN_VERSION" | cut -d. -f1) && \
+    npm config set cache /tmp/.cache/npm && \
     # if node version is 18 and up, use corepack
     if [ "$NODE_MAJOR_VERSION" -lt 18 ]; then \
       if [ "$YARN_MAJOR_VERSION" -gt 1 ]; then \
