@@ -21,18 +21,21 @@ install-prestashop() {
   fi
 
   touch install.lock
+  start=$(date +%s)
 
   if [ "$PS_FOLDER_ADMIN" != "admin" ] && [ -d "${ROOT_DIR}/admin" ]; then
       h2 "Renaming admin folder to $PS_FOLDER_ADMIN...";
       sudo -u www-data -s mv "${ROOT_DIR}/admin" "${ROOT_DIR}/$PS_FOLDER_ADMIN/"
   fi
 
+  h2 "Installing dependencies..."
+  composer install --no-plugins --no-interaction
+
+  build-themes
+
   reset-permissions
 
-  h2 "Installing PrestaShop, this can take +/- 1 minute..."
-  start=$(date +%s)
-
-  composer install --no-plugins --no-interaction
+  h2 "Running PrestaShop installation script..."
 
   sudo -u www-data -s php install-dev/index_cli.php \
     --all_languages="$PS_ALL_LANGUAGES" \
@@ -60,13 +63,11 @@ install-prestashop() {
     exit 1
   fi
 
-  build-themes
-
-  reset-permissions
-
   end=$(date +%s)
   runtime=$((end-start))
 
   h2 "PrestaShop installation succeeded in $runtime seconds."
   rm install.lock
+
+  reset-permissions
 }
