@@ -96,17 +96,18 @@ COPY ./config/php-fpm /usr/local/etc/php-fpm.d
 COPY ./config/php     /usr/local/etc/php
 COPY ./scripts/       /tmp/scripts
 
+ENV PHP_VERSION=${PHP_VERSION}
 ENV PS_VERSION=${PS_VERSION}
-
-ENV ROOT_DIR=${ROOT_DIR}
-
 
 ###
 # Core
 ###
 ENV BASE_URL=prestashop.dev.myparcel.nl
 ENV FULL_URL=https://${BASE_URL}
-ENV ROOT_DIR=/var/www/html
+ENV ROOT_DIR=${ROOT_DIR}
+
+ENV TMP_MODULES_DIR="/tmp/modules"
+ENV PS_MODULES_DIR="$ROOT_DIR/modules"
 
 ###
 # Database
@@ -133,7 +134,7 @@ ENV PS_FOLDER_ADMIN=admin1
 
 # Admin credentials
 ENV PS_ADMIN_MAIL=admin@${BASE_URL}
-ENV PS_ADMIN_PASSWORD=admin
+ENV PS_ADMIN_PASSWORD=admin123!
 
 
 ###
