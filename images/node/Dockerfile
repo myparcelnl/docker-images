@@ -40,6 +40,10 @@ RUN NODE_MAJOR_VERSION=$(echo "$NODE_VERSION" | cut -d. -f1) && \
         yarn config set cache-folder "$YARN_CACHE_FOLDER"; \
     else \
         # Yarn 2+
+        if [ "$YARN_MAJOR_VERSION" == "2" ]; then \
+            # Yarn 2 can't run config set without a package.json or yarn.lock file
+            echo "{}" > package.json ; \
+        fi; \
         yarn config set --home enableTelemetry   0 && \
         yarn config set --home enableGlobalCache false && \
         yarn config set --home cacheFolder       "$YARN_CACHE_FOLDER"; \
