@@ -54,7 +54,7 @@ jobs:
         #language=bash
         run: |
           gh workflow run "build-$IMAGE.yml"
-          
+
           echo "Job 'build-$IMAGE' dispatched."
 
       - name: 'Release the lock'

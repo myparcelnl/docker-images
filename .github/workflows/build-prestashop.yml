@@ -27,7 +27,7 @@ jobs:
 
           ps7_versions=$(echo "$versions" | jq -c 'map(select(. | startswith("1.7")))')
           ps8_versions=$(echo "$versions" | jq -c 'map(select(. | startswith("8")))')
-          
+
           echo "ps7-matrix=$ps7_versions" >> $GITHUB_OUTPUT
           echo "ps8-matrix=$ps8_versions" >> $GITHUB_OUTPUT
 
@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.4', '7.1' ]
+        php: ['7.4', '7.1']
         ps: ${{ fromJson(needs.prepare.outputs.ps7-matrix) }}
     steps:
       - uses: actions/checkout@v3
@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '8.2', '8.1' ]
+        php: ['8.2', '8.1']
         ps: ${{ fromJson(needs.prepare.outputs.ps8-matrix) }}
     steps:
       - uses: actions/checkout@v3

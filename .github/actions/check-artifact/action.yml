@@ -22,7 +22,7 @@ runs:
       #language=bash
       run: |
         file=$(gh api "repos/$REPO/actions/artifacts" | jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\")")
-        
+
         if [ -n "$file" ]; then
           echo "exists=true" >> $GITHUB_OUTPUT
         else

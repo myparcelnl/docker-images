@@ -14,12 +14,12 @@ permissions:
   packages: write
 
 env:
-  DOCKER_BUILD_PLATFORMS:  'linux/amd64,linux/arm64'
-  DOCKER_CACHE_MODE:       'max'
-  DOCKER_CACHE_SOURCE:     'scope=build-'             # Will be suffixed with matrix.es-version
-  DOCKER_CACHE_TARGET:     'scope=build-'             # Will be suffixed with matrix.es-version
-  DOCKER_CACHE_TYPE:       'gha'
-  IMAGE:                   'myparcel/elasticsearch'
+  DOCKER_BUILD_PLATFORMS: 'linux/amd64,linux/arm64'
+  DOCKER_CACHE_MODE: 'max'
+  DOCKER_CACHE_SOURCE: 'scope=build-' # Will be suffixed with matrix.es-version
+  DOCKER_CACHE_TARGET: 'scope=build-' # Will be suffixed with matrix.es-version
+  DOCKER_CACHE_TYPE: 'gha'
+  IMAGE: 'myparcel/elasticsearch'
   UBUNTU_DISTRIB_CODENAME: 'focal'
   #language=json
   ES_MATRIX: |-
@@ -41,7 +41,7 @@ env:
 jobs:
   set-matrix:
     runs-on: ubuntu-22.04
-    outputs: { matrix: '${{ steps.set-matrix.outputs.matrix }}' }
+    outputs: {matrix: '${{ steps.set-matrix.outputs.matrix }}'}
     steps:
       - id: set-matrix
         #language=bash
@@ -59,20 +59,20 @@ jobs:
 
       # Login to the Docker Hub
       - uses: docker/login-action@v2
-        if: ${{ !env.ACT }}  # Don't run when using `act`.
+        if: ${{ !env.ACT }} # Don't run when using `act`.
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Setup QEMU for cross-architecture builds
       - uses: docker/setup-qemu-action@v2
-        if: ${{ !env.ACT }}  # Don't run when using `act`.
+        if: ${{ !env.ACT }} # Don't run when using `act`.
 
       - uses: docker/setup-buildx-action@v2
 
       - uses: docker/metadata-action@v3
         id: meta
-        if: ${{ !env.ACT }}  # Don't run when using `act`.
+        if: ${{ !env.ACT }} # Don't run when using `act`.
         with:
           images: ${{ env.IMAGE }}
           tags: |
@@ -81,7 +81,7 @@ jobs:
             type=raw,value=${{ matrix.es-major }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-major != '' }}
             type=raw,value=${{ matrix.es-minor }},enable=${{ github.ref == 'refs/heads/main' && matrix.es-minor != '' }}
             type=raw,value=${{ matrix.es-version }},enable=${{ github.ref == 'refs/heads/main' }}
-            
+
             # Tags for branches, tags and pull requests
             type=ref,event=branch,suffix=-${{ matrix.es-version }},enable=${{ github.ref != 'refs/heads/main' }}
             type=ref,event=tag,suffix=-${{ matrix.es-version }}
@@ -89,16 +89,16 @@ jobs:
 
       - uses: docker/build-push-action@v3
         with:
-          context:    images/elasticsearch
+          context: images/elasticsearch
           build-args: |
             ES_VERSION=${{ matrix.es-version }}
             UBUNTU_DISTRIB_CODENAME=${{ env.UBUNTU_DISTRIB_CODENAME }}
-          tags:       ${{ steps.meta.outputs.tags }}
-          push:       ${{ env.ACT != 'true' }}  # Don't push when using `act`,
-          load:       ${{ env.ACT == 'true' }}  # instead load the image into the Docker daemon.
-          platforms:  ${{ env.DOCKER_BUILD_PLATFORMS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          push: ${{ env.ACT != 'true' }} # Don't push when using `act`,
+          load: ${{ env.ACT == 'true' }} # instead load the image into the Docker daemon.
+          platforms: ${{ env.DOCKER_BUILD_PLATFORMS }}
           cache-from: type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_SOURCE }}${{ matrix.es-version }}
-          cache-to:   type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_TARGET }}${{ matrix.es-version }},mode=${{ env.DOCKER_CACHE_MODE }}
+          cache-to: type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_TARGET }}${{ matrix.es-version }},mode=${{ env.DOCKER_CACHE_MODE }}
 
   notify-on-failure:
     needs:
