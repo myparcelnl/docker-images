@@ -50,6 +50,14 @@ jobs:
           echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
           echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
 
+      - if: steps.prepare.outputs.run == 'false'
+        env:
+          IMAGE: ${{ matrix.image }}
+        shell: bash
+        #language=bash
+        run: |
+          echo "➖ No changes detected for $IMAGE." >> $GITHUB_STEP_SUMMARY
+
       - name: 'Check if lock file exists'
         if: steps.prepare.outputs.run == 'true'
         uses: ./.github/actions/check-artifact
@@ -60,9 +68,12 @@ jobs:
           name: ${{ steps.prepare.outputs.artifact-name }}
 
       - if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'true'
+        env:
+          IMAGE: ${{ matrix.image }}
         shell: bash
         #language=bash
-        run: echo "Lock file already exists."
+        run: |
+          echo "⏱️ There was already a run scheduled for \`$IMAGE\`." >> $GITHUB_STEP_SUMMARY
 
       - name: 'Create lock file'
         if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
@@ -71,7 +82,7 @@ jobs:
         shell: bash
         #language=bash
         run: |
-          echo "$(date)" > $FILENAME
+          echo "$(date)" > "$FILENAME"
 
       - name: 'Upload lock artifact'
         uses: actions/upload-artifact@v4
@@ -81,3 +92,11 @@ jobs:
           include-hidden-files: true
           name: ${{ steps.prepare.outputs.artifact-name}}
           path: ${{ steps.prepare.outputs.filename }}
+
+      - if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
+        env:
+          IMAGE: ${{ matrix.image }}
+        shell: bash
+        #language=bash
+        run: |
+          echo "✅ A run for \`$IMAGE\` was scheduled." >> $GITHUB_STEP_SUMMARY
