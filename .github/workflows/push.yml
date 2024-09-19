@@ -51,7 +51,7 @@ jobs:
           echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
 
       - name: 'Check if lock file exists'
-        if: steps.prepare.outputs.run == 'true
+        if: steps.prepare.outputs.run == 'true'
         uses: ./.github/actions/check-artifact
         id: check-lock
         env:
