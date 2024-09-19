@@ -49,6 +49,8 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
       jq \
       # For cloning prestashop
       git \
+      # for node-gyp
+      python3 \
       $PHPIZE_DEPS \
     && \
     # Configure php extensions \
