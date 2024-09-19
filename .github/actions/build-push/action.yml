@@ -37,11 +37,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: docker/setup-qemu-action@v2
+    - uses: docker/setup-qemu-action@v3
 
-    - uses: docker/setup-buildx-action@v2
+    - uses: docker/setup-buildx-action@v3
 
-    - uses: docker/metadata-action@v4
+    - uses: docker/metadata-action@v5
       id: meta
       with:
         images: ${{ inputs.registry }}/${{ inputs.image }}
@@ -52,7 +52,7 @@ runs:
           type=ref,event=tag,suffix=-${{ inputs.suffix }}
           type=ref,event=pr,suffix=-${{ inputs.suffix }}
 
-    - uses: docker/build-push-action@v3
+    - uses: docker/build-push-action@v6
       name: build-push
       continue-on-error: true
       with:
