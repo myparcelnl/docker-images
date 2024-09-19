@@ -1,0 +1,29 @@
+{
+  "name": "@myparcelnl/docker-images",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myparcelnl/docker-images.git"
+  },
+  "scripts": {
+    "prepare": "is-ci || husky init"
+  },
+  "lint-staged": {
+    "*.{yml,yaml,md,json}": "prettier --write"
+  },
+  "prettier": "@myparcel/prettier-config",
+  "devDependencies": {
+    "@myparcel/prettier-config": "^1.1.0",
+    "husky": "^9.1.6",
+    "is-ci": "^3.0.1",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3"
+  },
+  "packageManager": "yarn@4.5.0",
+  "volta": {
+    "node": "20.17.0",
+    "yarn": "4.5.0"
+  }
+}
