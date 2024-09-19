@@ -70,7 +70,7 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      - uses: docker/metadata-action@v3
+      - uses: docker/metadata-action@v5
         id: meta
         if: ${{ !env.ACT }} # Don't run when using `act`.
         with:
