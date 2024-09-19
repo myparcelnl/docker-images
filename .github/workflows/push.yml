@@ -15,6 +15,7 @@ on:
       image:
         description: 'Image to schedule the workflow for (for testing purposes)'
         required: true
+        type: choice
         options:
           - prestashop
           - shopware
