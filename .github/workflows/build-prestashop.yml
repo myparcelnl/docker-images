@@ -40,7 +40,7 @@ jobs:
         php: ['7.4', '7.1']
         ps: ${{ fromJson(needs.prepare.outputs.ps7-matrix) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/login-ghcr
         with:
@@ -66,7 +66,7 @@ jobs:
         php: ['8.2', '8.1']
         ps: ${{ fromJson(needs.prepare.outputs.ps8-matrix) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/login-ghcr
         with:
