@@ -2,6 +2,22 @@
 
 Docker images we use in our open source projects. All images have `linux/amd64` and `linux/arm64` variants.
 
+## Usage
+
+To build the images using the provided root `docker-compose.yml`, first create `.env`:
+
+```bash
+cp .env.example .env
+```
+
+You can change the variables in the `.env` file to change which versions of the images are built.
+
+After that, use Docker compose to build the images:
+
+```bash
+docker compose build
+```
+
 ## Contents
 
 ## php-xd
