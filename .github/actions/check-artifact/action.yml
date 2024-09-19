@@ -1,0 +1,30 @@
+name: 'Check if artifact exists'
+
+inputs:
+  name:
+    description: 'Name of the artifact to check'
+    required: true
+
+outputs:
+  exists:
+    description: 'Whether the artifact exists'
+    value: ${{ steps.check.outputs.exists }}
+
+runs:
+  using: composite
+  steps:
+    - name: 'Check if artifact exists'
+      id: check
+      env:
+        ARTIFACT_NAME: ${{ inputs.name }}
+        REPO: ${{ github.repository }}
+      shell: bash
+      #language=bash
+      run: |
+        file=$(gh api "repos/$REPO/actions/artifacts" | jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\")")
+        
+        if [ -n "$file" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi

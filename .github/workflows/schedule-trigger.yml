@@ -1,0 +1,77 @@
+name: 'Trigger scheduled workflows'
+
+on:
+  # Run every day at 18:00 UTC
+  schedule:
+    - cron: '0 18 * * *'
+
+  # Or trigger manually
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        image:
+          - prestashop
+          - shopware
+          - wordpress
+    steps:
+      - name: 'Prepare'
+        id: prepare
+        env:
+          IMAGE: ${{ matrix.image }}
+        shell: bash
+        #language=bash
+        run: |
+          echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
+          echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
+
+      - name: 'Check if workflow is already pending'
+        id: check-lock
+        env:
+          ARTIFACT_NAME: ${{ steps.prepare.outputs.artifact-name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        #language=bash
+        run: |
+          file=$(gh api "repos/$REPO/actions/artifacts" | jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\")")
+
+          if [ -n "$file" ]; then
+            echo "has-lock=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-lock=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run actual job
+        if: steps.check-lock.outputs.has-lock == 'true'
+        env:
+          IMAGE: ${{ matrix.image }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        #language=bash
+        run: |
+          gh workflow run "build-$IMAGE.yml"
+          
+          echo "Job 'build-$IMAGE' dispatched."
+
+      - name: 'Release the lock'
+        if: steps.check-lock.outputs.has-lock == 'true'
+        shell: bash
+        env:
+          ARTIFACT_NAME: ${{ steps.prepare.outputs.artifact-name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        #language=bash
+        run: |
+          artifactId=$(gh api "/repos/$REPO/actions/artifacts" --jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\") | .id")
+
+          if [ -n "$artifactId" ]; then
+            gh api --method DELETE "/repos/$REPO/actions/artifacts/$artifactId"
+            echo "Lock artifact deleted successfully."
+          else
+            echo "No lock artifact found."
+            exit 1
+          fi

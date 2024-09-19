@@ -1,13 +1,6 @@
 name: 'Build shopware images'
 
 on:
-  push:
-    branches:
-      - main
-
-    paths:
-      - images/shopware/**/*
-
   workflow_dispatch:
 
 permissions:
@@ -24,11 +17,10 @@ jobs:
     with:
       min-version: '8.1'
 
-
   build:
     runs-on: ubuntu-22.04
     needs:
-      - prepare-wp
+      - prepare-php
     strategy:
       fail-fast: false
       matrix:

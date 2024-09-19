@@ -1,13 +1,6 @@
 name: 'Build wordpress images'
 
 on:
-  push:
-    branches:
-      - main
-
-    paths:
-      - images/wordpress/**/*
-
   workflow_dispatch:
 
 permissions:

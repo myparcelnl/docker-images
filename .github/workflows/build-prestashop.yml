@@ -1,13 +1,6 @@
 name: 'Build prestashop images'
 
 on:
-  push:
-    branches:
-      - main
-
-    paths:
-      - images/prestashop/**/*
-
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,67 @@
+name: 'Schedule workflow run'
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - images/prestashop/**
+      - images/shopware/**
+      - images/wordpress/**
+
+jobs:
+  prepare:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        image:
+          - prestashop
+          - shopware
+          - wordpress
+    steps:
+      - uses: tj-actions/changed-files@v45
+        id: changed-files
+        with:
+          files: 'images/${{ matrix.image }}/**'
+
+      - name: 'Prepare'
+        if: steps.changed-files.outputs.test_any_changed == 'true'
+        id: prepare
+        env:
+          IMAGE: ${{ matrix.image }}
+        shell: bash
+        #language=bash
+        run: |
+          echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
+          echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
+
+      - name: 'Check if lock file exists'
+        if: steps.changed-files.outputs.test_any_changed == 'true'
+        uses: ./.github/actions/check-artifact
+        id: check-lock
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ steps.prepare.outputs.artifact-name }}
+
+      - if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'true'
+        shell: bash
+        #language=bash
+        run: echo "Lock file already exists."
+
+      - name: 'Create lock file'
+        if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'false'
+        env:
+          FILENAME: ${{ steps.prepare.outputs.filename }}
+        shell: bash
+        #language=bash
+        run: |
+          echo "$(date)" > $FILENAME
+
+      - name: 'Upload lock artifact'
+        uses: actions/upload-artifact@v4
+        if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'false'
+        with:
+          name: ${{ steps.prepare.outputs.artifact-name}}
+          path: ${{ steps.prepare.outputs.filename }}
