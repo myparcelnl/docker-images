@@ -10,6 +10,8 @@ install-modules
 
 add-preset-data
 
+reset-permissions
+
 clear-cache
 warmup-cache
 
