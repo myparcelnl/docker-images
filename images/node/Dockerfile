@@ -14,27 +14,28 @@ ENV YARN_IGNORE_NODE=1
 
 WORKDIR /app
 
-RUN NODE_MAJOR_VERSION=$(echo $NODE_VERSION | cut -d. -f1) && \
-    NODE_MINOR_VERSION=$(echo $NODE_VERSION | cut -d. -f2) && \
+RUN NODE_MAJOR_VERSION=$(echo "$NODE_VERSION" | cut -d. -f1) && \
+    YARN_MAJOR_VERSION=$(echo "$YARN_VERSION" | cut -d. -f1) && \
     # if node version is 18 and up, use corepack
     if [ "$NODE_MAJOR_VERSION" -lt 18 ]; then \
-      # expand YARN_VERSION to the full version number with #.x \
-      if [[ ! "$YARN_VERSION" =~ ^1 ]]; then \
+      if [ "$YARN_MAJOR_VERSION" -gt 1 ]; then \
+        # If yarn 1 nothing needs to be done here.
+        # expand YARN_VERSION to the full version number with #.x
         if [[ "$YARN_VERSION" =~ ^[0-9]+$ ]]; then \
           YARN_VERSION="${YARN_VERSION}.x"; \
         fi && \
         yarn policies set-version stable && \
-        yarn set version $YARN_VERSION; \
-      fi && \
-      chmod +x ./.yarn/releases/yarn-*.cjs && \
-      # replace the default yarn in bin with the new version in .yarn/releases/yarn-x.x.x.cjs \
-      cp ./.yarn/releases/yarn-*.cjs "$(which yarn)"; \
+        yarn set version $YARN_VERSION && \
+        chmod +x ./.yarn/releases/yarn-*.cjs && \
+        # replace the default yarn in bin with the new version in .yarn/releases/yarn-x.x.x.cjs \
+        cp ./.yarn/releases/yarn-*.cjs "$(which yarn)"; \
+      fi \
     else \
       # If node version is 18 and up, use corepack
       corepack enable && \
       corepack prepare "yarn@${YARN_VERSION}" --activate; \
     fi && \
-    if [[ "$YARN_VERSION" =~ ^1 ]]; then \
+    if [ "$YARN_MAJOR_VERSION" == "1" ]; then \
         # Yarn 1.x
         yarn config set cache-folder "$YARN_CACHE_FOLDER"; \
     else \
