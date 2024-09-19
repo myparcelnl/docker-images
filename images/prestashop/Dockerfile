@@ -1,10 +1,11 @@
 ARG NODE_VERSION="16"
 ARG PHP_VERSION="8.1"
+ARG YARN_VERSION="3"
 
 ##########
 # Node
 ##########
-FROM node:${NODE_VERSION}-alpine AS node
+FROM ghcr.io/myparcelnl/node:${NODE_VERSION}-yarn${YARN_VERSION} AS node
 
 
 ##########
@@ -12,11 +13,15 @@ FROM node:${NODE_VERSION}-alpine AS node
 ##########
 FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-fpm-alpine AS prestashop
 
+ENV YARN_IGNORE_NODE=1
+
 COPY --from=node /opt/              /opt/
 COPY --from=node /usr/lib           /usr/lib
 COPY --from=node /usr/local/bin     /usr/local/bin
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/lib     /usr/local/lib
+COPY --from=node /root/.npmrc       /root/.npmrc
+COPY --from=node /root/.yarnrc.yml  /root/.yarnrc.yml
 
 ARG PS_VERSION="8.0.4"
 
@@ -80,10 +85,6 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     rm -rf vendor && \
     # Set composer cache location
     composer config --global cache-dir /tmp/.cache/composer && \
-    # Set npm cache location
-    npm config set cache /tmp/.cache/npm && \
-    # Set yarn cache location
-    yarn config set cache-folder /tmp/.cache/yarn && \
     # Reset permissions
     chown -R www-data . && \
     # Clear cache and unnecessary dependencies

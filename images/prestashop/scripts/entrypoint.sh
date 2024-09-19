@@ -5,6 +5,7 @@ for script in /tmp/scripts/_*; do source $script; done
 # Start php fpm in the background in advance.
 start-php-fpm
 
+install-cli
 install-prestashop
 install-modules
 

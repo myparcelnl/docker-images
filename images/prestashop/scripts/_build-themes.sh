@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 
-# Some super hacky changes needed to be able to compile the scss of admin-dev/themes/new-theme with sass^1 :(
-fix-files() {
-  sed -i 's/@extend a:hover;/@extend a, :hover;/' './admin-dev/themes/new-theme/node_modules/prestakit/scss/_breadcrumb.scss' || true
-  sed -i 's/@extend .btn-primary:disabled;/@extend .btn-primary, :disabled;/' './admin-dev/themes/new-theme/node_modules/prestakit/scss/_custom-forms.scss' || true
-  sed -i 's/ - 2;/;/' './admin-dev/themes/new-theme/node_modules/select2-bootstrap-theme/src/select2-bootstrap.scss' || true
-}
-
 build-themes() {
   h2 "Building themes..."
 
+  # Remove legacy node-sass and replace with dart-sass (sass)
+  find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/vendor/*' \) -exec \
+    sed -i 's/"node-sass": ".*"/"sass": "^1"/g' {} \;
+
+  # If using sass-embedded, must update to >=1.77.0 to work on ARM
+  find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/vendor/*' \) -exec \
+    sed -i 's/"sass-embedded": ".*"/"sass-embedded": "^1.77.0"/g' {} \;
+
+  # npm install is run through via make install, so add postinstall hooks to modify files in node_modules after npm install
+  # shellcheck disable=SC2038
+  find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/vendor/*' \) -exec \
+    dirname {} \; | xargs -I {} sh -c 'cd {}; npm pkg set "scripts.postinstall=sh /tmp/scripts/fix-sass.sh"'
+
   if major-version-is 1; then
-    YARN_IGNORE_NODE=1 yarn set version 3.6.4
-
-    yarn config set --home enableTelemetry 0
-
-    yarn config set enableGlobalCache true
-    yarn config set globalFolder /tmp/.cache/yarn
     yarn config set logFilters --json '[ {"code":"YN0060","level":"discard"}, {"code":"YN0002","level":"discard"} ]'
     yarn config set nodeLinker node-modules
+    yarn config set nmHoistingLimits workspaces
 
     yarn plugin import workspace-tools
 
@@ -29,60 +30,19 @@ build-themes() {
       "workspaces[]=themes" \
       "workspaces[]=themes/**"
 
-    yarn config set nmHoistingLimits workspaces
-
-    # Replace node-sass with sass in all workspaces
-    yarn workspaces foreach -pv --exclude root exec npm pkg delete \
-      devDependencies.node-sass \
-      dependencies.node-sass \
-      peerDependencies.node-sass
-    yarn workspaces foreach -pv --exclude root exec npm pkg set devDependencies.sass=^1
-
     yarn install
-
-    fix-files
 
     yarn workspaces foreach -pv --exclude root exec npm pkg set "scripts.build:dev=NODE_ENV=development webpack --mode development"
     yarn workspaces foreach -pv --exclude root run build:dev
-
-    if [ "$?" -eq 0 ]; then
-      h2 "Built themes."
-    else
-      h2 "One or more themes failed to build."
-    fi
   fi
 
   if major-version-is 8; then
-    workspaces=$(find themes admin-dev -type f -name package.json -not -path "*/node_modules/*" -not -path "*/vendor/*" -exec dirname {} \;)
+    make install
+  fi
 
-    for workspace in $workspaces; do
-      cd "$workspace" || exit 1
-      h2 "Installing $workspace..."
-
-      npm pkg delete devDependencies.node-sass
-      npm pkg delete dependencies.node-sass
-      npm pkg set devDependencies.sass=^1
-
-      npm install --legacy-peer-deps
-
-      cd - || exit 1
-    done
-
-    fix-files
-
-    for workspace in $workspaces; do
-      cd "$workspace" || exit 1
-      h2 "Building $workspace..."
-
-      npm run build
-
-      if [ "$?" -ne 0 ]; then
-        h2 "Failed to build $workspace."
-      else
-        h2 "Done building $workspace."
-      fi
-
-      cd - || exit 1
-    done
+  if [ "$?" -eq 0 ]; then
+    h2 "Built themes."
+  else
+    h2 "One or more themes failed to build."
   fi
 }
