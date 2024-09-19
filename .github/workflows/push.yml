@@ -30,6 +30,8 @@ jobs:
           - shopware
           - wordpress
     steps:
+      - uses: actions/checkout@v4
+
       - uses: tj-actions/changed-files@v45
         id: changed-files
         with:
