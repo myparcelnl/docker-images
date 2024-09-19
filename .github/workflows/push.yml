@@ -10,6 +10,16 @@ on:
       - images/shopware/**
       - images/wordpress/**
 
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image to schedule the workflow for (for testing purposes)'
+        required: true
+        options:
+          - prestashop
+          - shopware
+          - wordpress
+
 jobs:
   prepare:
     runs-on: ubuntu-22.04
@@ -26,18 +36,19 @@ jobs:
           files: 'images/${{ matrix.image }}/**'
 
       - name: 'Prepare'
-        if: steps.changed-files.outputs.test_any_changed == 'true'
+        if: steps.changed-files.outputs.test_any_changed == 'true' || inputs.image == matrix.image
         id: prepare
         env:
           IMAGE: ${{ matrix.image }}
         shell: bash
         #language=bash
         run: |
+          echo "run=true"                           >> $GITHUB_OUTPUT
           echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
           echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
 
       - name: 'Check if lock file exists'
-        if: steps.changed-files.outputs.test_any_changed == 'true'
+        if: steps.prepare.outputs.run == 'true
         uses: ./.github/actions/check-artifact
         id: check-lock
         env:
@@ -45,13 +56,13 @@ jobs:
         with:
           name: ${{ steps.prepare.outputs.artifact-name }}
 
-      - if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'true'
+      - if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'true'
         shell: bash
         #language=bash
         run: echo "Lock file already exists."
 
       - name: 'Create lock file'
-        if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'false'
+        if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
         env:
           FILENAME: ${{ steps.prepare.outputs.filename }}
         shell: bash
@@ -61,7 +72,7 @@ jobs:
 
       - name: 'Upload lock artifact'
         uses: actions/upload-artifact@v4
-        if: steps.changed-files.outputs.test_any_changed == 'true' && steps.check-lock.outputs.exists == 'false'
+        if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
         with:
           name: ${{ steps.prepare.outputs.artifact-name}}
           path: ${{ steps.prepare.outputs.filename }}
