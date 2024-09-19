@@ -35,6 +35,7 @@ jobs:
 
       - uses: tj-actions/changed-files@v45
         id: changed-files
+        if: inputs.image == ''
         with:
           files: 'images/${{ matrix.image }}/**'
 
@@ -49,14 +50,6 @@ jobs:
           echo "run=true"                           >> $GITHUB_OUTPUT
           echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
           echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
-
-      - if: steps.prepare.outputs.run == 'false'
-        env:
-          IMAGE: ${{ matrix.image }}
-        shell: bash
-        #language=bash
-        run: |
-          echo "➖ No changes detected for $IMAGE." >> $GITHUB_STEP_SUMMARY
 
       - name: 'Check if lock file exists'
         if: steps.prepare.outputs.run == 'true'
