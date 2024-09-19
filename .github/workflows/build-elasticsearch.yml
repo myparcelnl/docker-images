@@ -1,12 +1,6 @@
 name: 'Build Elasticsearch images'
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - images/elasticsearch/**/*
-
   workflow_dispatch:
 
 permissions:

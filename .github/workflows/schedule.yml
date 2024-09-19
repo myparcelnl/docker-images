@@ -6,10 +6,7 @@ on:
       - main
 
     paths:
-      - images/node/**
-      - images/prestashop/**
-      - images/shopware/**
-      - images/wordpress/**
+      - images/**
 
   workflow_dispatch:
     inputs:
@@ -18,9 +15,10 @@ on:
         required: true
         type: choice
         options:
+          - elasticsearch
           - node
+          - php-xd
           - prestashop
-          - shopware
           - wordpress
 
 jobs:
@@ -29,7 +27,9 @@ jobs:
     strategy:
       matrix:
         image:
+          - elasticsearch
           - node
+          - php-xd
           - prestashop
           - shopware
           - wordpress

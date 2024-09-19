@@ -1,13 +1,6 @@
 name: 'Build php-xd images'
 
 on:
-  push:
-    branches:
-      - main
-
-    paths:
-      - images/php-xd/**/*
-
   workflow_dispatch:
 
 permissions:
