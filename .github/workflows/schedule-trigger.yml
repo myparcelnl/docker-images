@@ -1,4 +1,4 @@
-name: 'Trigger scheduled workflows'
+name: '▶️ Trigger scheduled workflows'
 
 on:
   # Run every day at 18:00 UTC
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run:
+  trigger:
     runs-on: ubuntu-22.04
     strategy:
       matrix:

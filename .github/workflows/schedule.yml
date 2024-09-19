@@ -1,4 +1,4 @@
-name: 'Schedule workflow run'
+name: '⏱️ Schedule workflow run'
 
 on:
   push:
@@ -22,7 +22,7 @@ on:
           - wordpress
 
 jobs:
-  prepare:
+  schedule:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
