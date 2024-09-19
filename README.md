@@ -40,14 +40,6 @@ All [tags in the `prestashop/prestashop` repository](https://api.github.com/repo
 - 8.1
 - 8.2
 
-### Testing
-
-To build the image, pass the following environment variables when building:
-
-```shell
-PS_VERSION=8.1.0 PHP_VERSION=8.2 docker compose build prestashop
-```
-
 ## shopware
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/shopware)
@@ -65,14 +57,6 @@ Shopware images based on `php-xd`.
 - 8.2
 - 8.1
 
-### Testing
-
-To build the image, pass the following environment variables when building:
-
-```shell
-SW_VERSION=6.5 PHP_VERSION=7.4 docker compose build shopware
-```
-
 ## wordpress
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/wordpress)
@@ -89,11 +73,3 @@ All versions returned by [the WordPress API](https://api.wordpress.org/core/vers
 
 - 7.4
 - 8.2
-
-### Testing
-
-To build the image, pass the following environment variables when building:
-
-```shell
-WP_VERSION=6.5.3 PHP_VERSION=7.4 docker compose build wordpress
-```
