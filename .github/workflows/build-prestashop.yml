@@ -82,3 +82,11 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php }}
             PS_VERSION=${{ matrix.ps }}
+
+  notify-on-failure:
+    needs:
+      - build-ps7
+      - build-ps8
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    secrets: inherit

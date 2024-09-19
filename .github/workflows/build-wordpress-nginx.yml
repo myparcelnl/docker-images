@@ -20,8 +20,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
     steps:
       - uses: actions/checkout@v3
 
@@ -35,3 +33,11 @@ jobs:
           cache-mode: 'min'
           context: images/wordpress-nginx
           image: myparcelnl/wordpress-nginx
+          suffix: ''
+
+  notify-on-failure:
+    needs:
+      - build
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    secrets: inherit

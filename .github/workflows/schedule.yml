@@ -93,3 +93,10 @@ jobs:
         #language=bash
         run: |
           echo "✅ A run for \`$IMAGE\` was scheduled." >> $GITHUB_STEP_SUMMARY
+
+  notify-on-failure:
+    needs:
+      - schedule
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    secrets: inherit

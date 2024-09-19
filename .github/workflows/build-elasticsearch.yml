@@ -99,3 +99,10 @@ jobs:
           platforms:  ${{ env.DOCKER_BUILD_PLATFORMS }}
           cache-from: type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_SOURCE }}${{ matrix.es-version }}
           cache-to:   type=${{ env.DOCKER_CACHE_TYPE }},${{ env.DOCKER_CACHE_TARGET }}${{ matrix.es-version }},mode=${{ env.DOCKER_CACHE_MODE }}
+
+  notify-on-failure:
+    needs:
+      - build-elasticsearch
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    secrets: inherit
