@@ -6,6 +6,7 @@ on:
       - main
 
     paths:
+      - images/node/**
       - images/prestashop/**
       - images/shopware/**
       - images/wordpress/**
@@ -17,6 +18,7 @@ on:
         required: true
         type: choice
         options:
+          - node
           - prestashop
           - shopware
           - wordpress
@@ -27,6 +29,7 @@ jobs:
     strategy:
       matrix:
         image:
+          - node
           - prestashop
           - shopware
           - wordpress

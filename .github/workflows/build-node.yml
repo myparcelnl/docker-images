@@ -1,0 +1,56 @@
+name: 'Build node images'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 16
+          - 18
+          - 20
+          - 22
+        yarn:
+          - 1
+          - 2
+          - 3
+          - 4
+    env:
+      NODE_LATEST: 22
+      YARN_LATEST: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/login-ghcr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/build-push
+        with:
+          registry: ghcr.io
+          cache-mode: 'min'
+          context: images/node
+          image: myparcelnl/node
+          latest: ${{ matrix.node == env.NODE_LATEST }} && ${{ matrix.yarn == env.YARN_LATEST }}
+          suffix: ${{ matrix.node }}-yarn${{ matrix.yarn }}
+          build-args: |
+            NODE_VERSION=${{ matrix.node }}
+            YARN_VERSION=${{ matrix.yarn }}
+
+  notify-on-failure:
+    needs:
+      - build
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    secrets: inherit
