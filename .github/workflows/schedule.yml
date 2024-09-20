@@ -56,14 +56,13 @@ jobs:
 
       - name: 'Check if lock file exists'
         if: steps.prepare.outputs.run == 'true'
-        uses: ./.github/actions/check-artifact
-        id: check-lock
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: find-artifact
+        uses: myparcelnl/actions/find-artifact@v4
         with:
-          name: ${{ steps.prepare.outputs.artifact-name }}
+          artifact-name: ${{ steps.prepare.outputs.artifact-name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'true'
+      - if: steps.prepare.outputs.run == 'true' && steps.find-artifact.outputs.exists == 'true'
         env:
           IMAGE: ${{ matrix.image }}
         shell: bash
@@ -72,7 +71,7 @@ jobs:
           echo "⏱️ There was already a run scheduled for \`$IMAGE\`." >> $GITHUB_STEP_SUMMARY
 
       - name: 'Create lock file'
-        if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
+        if: steps.prepare.outputs.run == 'true' && steps.find-artifact.outputs.exists == 'false'
         env:
           FILENAME: ${{ steps.prepare.outputs.filename }}
         shell: bash
@@ -82,14 +81,15 @@ jobs:
 
       - name: 'Upload lock artifact'
         uses: actions/upload-artifact@v4
-        if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
+        if: steps.prepare.outputs.run == 'true' && steps.find-artifact.outputs.exists == 'false'
         with:
           if-no-files-found: error
           include-hidden-files: true
           name: ${{ steps.prepare.outputs.artifact-name}}
           path: ${{ steps.prepare.outputs.filename }}
 
-      - if: steps.prepare.outputs.run == 'true' && steps.check-lock.outputs.exists == 'false'
+      - name: 'Report'
+        if: steps.prepare.outputs.run == 'true' && steps.find-artifact.outputs.exists == 'false'
         env:
           IMAGE: ${{ matrix.image }}
         shell: bash

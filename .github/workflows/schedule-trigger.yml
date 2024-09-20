@@ -31,25 +31,22 @@ jobs:
           echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
           echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
 
-      - name: 'Check if workflow is already pending'
-        id: check-lock
-        env:
-          ARTIFACT_NAME: ${{ steps.prepare.outputs.artifact-name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+      - name: 'Check if workflow is scheduled to run'
+        id: find-artifact
+        uses: myparcelnl/actions/find-artifact@v4
+        with:
+          artifact-name: ${{ steps.prepare.outputs.artifact-name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Report status'
+        if: steps.find-artifact.outputs.exists == 'false'
         shell: bash
         #language=bash
         run: |
-          file=$(gh api "repos/$REPO/actions/artifacts" | jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\")")
+          echo "Workflow 'build-$IMAGE' is not scheduled to run." >> $GITHUB_STEP_SUMMARY
 
-          if [ -n "$file" ]; then
-            echo "has-lock=true" >> $GITHUB_OUTPUT
-          else
-            echo "has-lock=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Run actual job
-        if: steps.check-lock.outputs.has-lock == 'true'
+      - name: 'Run the workflow'
+        if: steps.find-artifact.outputs.exists == 'true'
         env:
           IMAGE: ${{ matrix.image }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +58,7 @@ jobs:
           echo "Job 'build-$IMAGE' dispatched."
 
       - name: 'Release the lock'
-        if: steps.check-lock.outputs.has-lock == 'true'
+        if: steps.find-artifact.outputs.exists == 'true'
         shell: bash
         env:
           ARTIFACT_NAME: ${{ steps.prepare.outputs.artifact-name }}
@@ -74,6 +71,8 @@ jobs:
           if [ -n "$artifactId" ]; then
             gh api --method DELETE "/repos/$REPO/actions/artifacts/$artifactId"
             echo "Lock artifact deleted successfully."
+
+            echo "Successfully triggered scheduled workflow 'build-$IMAGE'." >> $GITHUB_STEP_SUMMARY
           else
             echo "No lock artifact found."
             exit 1
