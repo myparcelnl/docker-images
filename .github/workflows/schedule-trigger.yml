@@ -41,6 +41,8 @@ jobs:
       - name: 'Report status'
         if: steps.find-artifact.outputs.exists == 'false'
         shell: bash
+        env:
+          IMAGE: ${{ matrix.image }}
         #language=bash
         run: |
           echo "Workflow 'build-$IMAGE' is not scheduled to run." >> $GITHUB_STEP_SUMMARY
