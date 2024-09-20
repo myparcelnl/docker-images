@@ -28,8 +28,12 @@ jobs:
         shell: bash
         #language=bash
         run: |
-          echo "filename=.lock-$IMAGE.txt"          >> $GITHUB_OUTPUT
-          echo "artifact-name=workflow-lock-$IMAGE" >> $GITHUB_OUTPUT
+          workflowName="build-$IMAGE"
+          repositoryUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+
+          echo "artifact-name=workflow-lock-$IMAGE"                              >> $GITHUB_OUTPUT
+          echo "workflow-name=$workflowName"                                     >> $GITHUB_OUTPUT
+          echo "workflow-url=$repositoryUrl/actions/workflows/$workflowName.yml" >> $GITHUB_OUTPUT
 
       - name: 'Check if workflow is scheduled to run'
         id: find-artifact
@@ -40,46 +44,40 @@ jobs:
 
       - name: 'Report status'
         if: steps.find-artifact.outputs.exists == 'false'
-        shell: bash
         env:
-          IMAGE: ${{ matrix.image }}
+          WORKFLOW_NAME: ${{ steps.prepare.outputs.workflow-name }}
+        shell: bash
         #language=bash
         run: |
-          echo "Workflow 'build-$IMAGE' is not scheduled to run." >> $GITHUB_STEP_SUMMARY
+          echo "Workflow '$WORKFLOW_NAME' is not scheduled to run."
 
       - name: 'Run the workflow'
         if: steps.find-artifact.outputs.exists == 'true'
         env:
-          IMAGE: ${{ matrix.image }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
+          IMAGE: ${{ matrix.image }}
+          WORKFLOW_NAME: ${{ steps.prepare.outputs.workflow-name }}
+          WORKFLOW_URL: ${{ steps.prepare.outputs.workflow-url }}
         shell: bash
         #language=bash
         run: |
-          gh workflow run --repo "$REPOSITORY" "build-$IMAGE.yml"
+          gh workflow run --repo "$REPOSITORY" "$WORKFLOW_NAME.yml"
 
-          echo "Job 'build-$IMAGE' dispatched."
+          echo "Job '$WORKFLOW_NAME' dispatched."
+
+          echo "Successfully triggered scheduled workflow: [\`$WORKFLOW_NAME\`]($WORKFLOW_URL)." >> $GITHUB_STEP_SUMMARY
 
       - name: 'Release the lock'
         if: steps.find-artifact.outputs.exists == 'true'
         shell: bash
         env:
-          ARTIFACT_NAME: ${{ steps.prepare.outputs.artifact-name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+          ARTIFACT_ID: ${{ steps.find-artifact.outputs.id }}
         #language=bash
         run: |
-          artifactId=$(gh api "/repos/$REPO/actions/artifacts" --jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\") | .id")
+          gh api --method DELETE "/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID"
 
-          if [ -n "$artifactId" ]; then
-            gh api --method DELETE "/repos/$REPO/actions/artifacts/$artifactId"
-            echo "Lock artifact deleted successfully."
-
-            echo "Successfully triggered scheduled workflow 'build-$IMAGE'." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "No lock artifact found."
-            exit 1
-          fi
+          echo "Lock artifact deleted successfully."
 
   notify-on-failure:
     needs:
