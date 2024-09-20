@@ -52,10 +52,11 @@ jobs:
         env:
           IMAGE: ${{ matrix.image }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
         shell: bash
         #language=bash
         run: |
-          gh workflow run "build-$IMAGE.yml"
+          gh workflow run --repo "$REPOSITORY" "build-$IMAGE.yml"
 
           echo "Job 'build-$IMAGE' dispatched."
 
