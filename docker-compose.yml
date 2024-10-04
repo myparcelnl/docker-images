@@ -1,20 +1,33 @@
 services:
-  ###
-  # Main php container
-  #
-  # This container runs the php-fpm process and serves WordPress.
-  #
-  # Requires the db container to be running.
-  #
-  # Contains:
-  #  - php-fpm, xdebug, composer
-  #  - WordPress installation (in volume web-data)
-  #  - Various tools: zsh, vim
-  #
-  # See https://github.com/myparcelnl/docker-images/pkgs/container/wordpress
-  ##
+  php-xd:
+    image: ghcr.io/myparcelnl/php-xd:${PHP_XD_PHP_VERSION}${PHP_XD_TYPE}-alpine${PHP_XD_ALPINE_VERSION}
+    build:
+      context: images/php-xd
+      args:
+        ALPINE_VERSION: ${PHP_XD_ALPINE_VERSION}
+        PHP_VERSION: ${PHP_XD_PHP_VERSION}
+        TYPE: ${PHP_XD_TYPE}
+
   wordpress:
-    image: ghcr.io/myparcelnl/wordpress:6.3-php7.4
+    image: ghcr.io/myparcelnl/wordpress:${WP_VERSION}-php${WP_PHP_VERSION}
     build:
       context: images/wordpress
-      dockerfile: Dockerfile
+      args:
+        WP_VERSION: ${WP_VERSION}
+        PHP_VERSION: ${WP_PHP_VERSION}
+
+  prestashop:
+    image: ghcr.io/myparcelnl/prestashop:${PS_VERSION}-php${PS_PHP_VERSION}
+    build:
+      context: images/prestashop
+      args:
+        PS_VERSION: ${PS_VERSION}
+        PHP_VERSION: ${PS_PHP_VERSION}
+
+  shopware:
+    image: ghcr.io/myparcelnl/shopware:${SW_VERSION}-php${SW_PHP_VERSION}
+    build:
+      context: images/shopware
+      args:
+        SW_VERSION: ${SW_VERSION}
+        PHP_VERSION: ${SW_PHP_VERSION}
