@@ -159,7 +159,8 @@ RUN apk add --no-cache \
     tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire && \
     mv /tmp/blackfire/blackfire-*.so "$(php -r "echo ini_get ('extension_dir');")/blackfire.so" && \
     printf "blackfire.agent_socket=tcp://blackfire:8307\n" > "$PHP_INI_DIR/conf.d/blackfire.ini" && \
-    rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
+    rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz && \
+    blackfire php:install
 
 ENV XDEBUG_MODE=debug
 
