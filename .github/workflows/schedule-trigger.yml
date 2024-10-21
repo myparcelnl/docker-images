@@ -61,7 +61,7 @@ jobs:
         shell: bash
         #language=bash
         run: |
-          gh workflow run --repo "$REPOSITORY" "$WORKFLOW_NAME.yml"
+          gh workflow run "$WORKFLOW_NAME.yml"
 
           echo "Job '$WORKFLOW_NAME' dispatched."
 
