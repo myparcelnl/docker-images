@@ -8,6 +8,10 @@ start-nginx() {
     return
   fi
 
+  # replace docker php fpm location with local one in nginx default config
+  sed -i -e 's|php:9000;|localhost:9000;|g' /etc/nginx/http.d/default.conf
+
+  # start nginx
   nginx;
 
   if [ "$?" -eq 0 ]; then
