@@ -23,7 +23,7 @@ COPY --from=node /usr/local/lib     /usr/local/lib
 COPY --from=node /root/.npmrc       /root/.npmrc
 COPY --from=node /root/.yarnrc.yml  /root/.yarnrc.yml
 
-ARG PS_VERSION="8.0.4"
+ARG PS_VERSION="8.0.5"
 
 ARG ROOT_DIR=/var/www/html
 
@@ -33,6 +33,8 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     apk update && \
     # Install dependencies
     apk add --no-cache \
+      # To run in AWS \
+      nginx \
       # gd
       freetype-dev \
       libjpeg-turbo-dev \
@@ -95,9 +97,10 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
     composer clear-cache && \
     apk del git
 
-COPY ./config/php-fpm /usr/local/etc/php-fpm.d
-COPY ./config/php     /usr/local/etc/php
-COPY ./scripts/       /tmp/scripts
+COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
+COPY ./config/php       /usr/local/etc/php
+COPY ./scripts/         /tmp/scripts
+COPY ./etc/nginx/http.d /etc/nginx/http.d
 
 ENV PHP_VERSION=${PHP_VERSION}
 ENV PS_VERSION=${PS_VERSION}
@@ -133,7 +136,7 @@ ENV PS_DB_CREATE=1
 ENV PS_ENABLE_SSL=1
 ENV PS_COUNTRY=NL
 ENV PS_LANGUAGE=en
-ENV PS_FOLDER_ADMIN=admin1
+ENV PS_FOLDER_ADMIN=admin-dev
 
 # Admin credentials
 ENV PS_ADMIN_MAIL=admin@${BASE_URL}
