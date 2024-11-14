@@ -21,6 +21,8 @@ jobs:
           - shopware
           - wordpress
     steps:
+      - uses: actions/checkout@v4
+
       - name: 'Prepare'
         id: prepare
         env:
