@@ -35,6 +35,7 @@ PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
 - 8.0 (latest XDebug 3)
 - 8.1 (latest XDebug 3)
 - 8.2 (latest XDebug 3)
+- 8.3 (latest XDebug 3)
 
 ## prestashop
 
