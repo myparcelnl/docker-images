@@ -59,7 +59,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Setup QEMU for cross-architecture builds
-      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-qemu-action@v3
         if: ${{ !env.ACT }} # Don't run when using `act`.
 
       - uses: docker/setup-buildx-action@v3
