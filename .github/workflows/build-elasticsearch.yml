@@ -81,7 +81,7 @@ jobs:
             type=ref,event=tag,suffix=-${{ matrix.es-version }}
             type=ref,event=pr,suffix=-${{ matrix.es-version }}
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v6
         with:
           context: images/elasticsearch
           build-args: |
