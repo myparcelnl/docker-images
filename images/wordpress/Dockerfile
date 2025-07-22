@@ -3,7 +3,7 @@ ARG PHP_VERSION="7.4"
 ##########
 # WordPress
 ##########
-FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-fpm-alpine AS wordpress
+FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-alpine AS wordpress
 
 ARG WP_VERSION="6.1.1"
 

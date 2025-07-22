@@ -24,7 +24,7 @@ docker compose build
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/php-xd)
 
-PHP images based on `php:<version>-alpine`, with Composer 2.5 and XDebug.
+PHP images based on `php:<version>-fpm-alpine`, with Composer 2.5 and pcov installed, and XDebug enabled. Based on the fpm variant of the official PHP images, so you can use it for both CLI and web applications.
 
 ### PHP versions
 

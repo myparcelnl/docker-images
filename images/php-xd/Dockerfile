@@ -1,9 +1,9 @@
 ARG PHP_VERSION="7.2"
 ARG ALPINE_VERSION=""
 
-FROM php:${PHP_VERSION}-alpine${ALPINE_VERSION} AS base
+FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} AS base
 
-LABEL org.opencontainers.image.description='Alpine image with php, composer 2, XDebug and pcov.'
+LABEL org.opencontainers.image.description='Alpine image with php-fpm, composer 2, XDebug and pcov.'
 
 RUN if [ $(php -r "echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;") = "71" ]; then \
         export COMPOSER_VERSION="2.2.0"; \
