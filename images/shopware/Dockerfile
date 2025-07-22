@@ -3,7 +3,7 @@ ARG PHP_VERSION="8.1"
 ##########
 # Shopware
 ##########
-FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-alpine AS shopware
+FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION} AS shopware
 
 ARG NODE_VERSION="16"
 ARG SW_VERSION="6.5.0.0"

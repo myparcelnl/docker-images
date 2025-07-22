@@ -11,7 +11,7 @@ FROM ghcr.io/myparcelnl/node:${NODE_VERSION}-yarn${YARN_VERSION} AS node
 ##########
 # Prestashop
 ##########
-FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION}-alpine AS prestashop
+FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION} AS prestashop
 
 ENV YARN_IGNORE_NODE=1
 
