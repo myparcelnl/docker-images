@@ -16,6 +16,7 @@ jobs:
     outputs:
       ps7-matrix: ${{ steps.ps.outputs.ps7-matrix }}
       ps8-matrix: ${{ steps.ps.outputs.ps8-matrix }}
+      ps9-matrix: ${{ steps.ps.outputs.ps9-matrix }}
     steps:
       - name: 'Get all PrestaShop versions as json array'
         id: ps
@@ -27,9 +28,11 @@ jobs:
 
           ps7_versions=$(echo "$versions" | jq -c 'map(select(. | startswith("1.7")))')
           ps8_versions=$(echo "$versions" | jq -c 'map(select(. | startswith("8")))')
+          ps9_versions=$(echo "$versions" | jq -c 'map(select(. | startswith("9")))')
 
           echo "ps7-matrix=$ps7_versions" >> $GITHUB_OUTPUT
           echo "ps8-matrix=$ps8_versions" >> $GITHUB_OUTPUT
+          echo "ps9-matrix=$ps9_versions" >> $GITHUB_OUTPUT
 
   build-ps7:
     runs-on: ubuntu-22.04
@@ -83,10 +86,38 @@ jobs:
             PHP_VERSION=${{ matrix.php }}
             PS_VERSION=${{ matrix.ps }}
 
+
+  build-ps9:
+    runs-on: ubuntu-22.04
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.3', '8.2', '8.1']
+        ps: ${{ fromJson(needs.prepare.outputs.ps9-matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/login-ghcr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/build-push
+        with:
+          registry: ghcr.io
+          cache-mode: 'min'
+          context: images/prestashop
+          image: myparcelnl/prestashop
+          suffix: ${{ matrix.ps }}-php${{ matrix.php }}
+          build-args: |
+            PHP_VERSION=${{ matrix.php }}
+            PS_VERSION=${{ matrix.ps }}
+
   notify-on-failure:
     needs:
       - build-ps7
       - build-ps8
+      - build-ps9
     if: always() && contains(needs.*.result, 'failure')
     uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
     secrets: inherit
