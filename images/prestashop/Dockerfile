@@ -16,7 +16,6 @@ FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION} AS prestashop
 ENV YARN_IGNORE_NODE=1
 
 COPY --from=node /opt/              /opt/
-COPY --from=node /usr/lib           /usr/lib
 COPY --from=node /usr/local/bin     /usr/local/bin
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/lib     /usr/local/lib
