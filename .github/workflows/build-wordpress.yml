@@ -16,7 +16,7 @@ jobs:
     outputs:
       matrix: ${{ steps.wp.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: 'Get all WordPress versions as json array'
         id: wp
@@ -39,7 +39,7 @@ jobs:
         php: ['8.4', '8.3', '8.2', '7.4']
         wp: ${{ fromJSON(needs.prepare-wp.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ./.github/actions/login-ghcr
         with:
