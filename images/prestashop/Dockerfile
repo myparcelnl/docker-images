@@ -50,6 +50,7 @@ RUN PHP_VERSION="$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;")" && \
       git \
       # for node-gyp
       python3 \
+	  py3-setuptools \
       $PHPIZE_DEPS \
     && \
     # Configure php extensions \
