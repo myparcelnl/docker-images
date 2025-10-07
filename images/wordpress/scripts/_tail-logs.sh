@@ -1,7 +1,7 @@
 tail-logs() {
   h2 "Tailing logs..."
 
-  exec tail -F -q -n+2 ./wp-content/**/*.log | perl -p \
+  exec tail -F -q -n+2 /tmp/wp-debug.log | perl -p \
     -e 's/(^.+\[PDK\])/\e[1;32m$1\e[0m/g;' \
     -e 's/(\[PDK\])/\e[36m$&\e[0m/g;' \
     -e 's/(ERROR|CRITICAL|FATAL|EMERGENCY)/\e[31m$&\e[0m/g;' \
