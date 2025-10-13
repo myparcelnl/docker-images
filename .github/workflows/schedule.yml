@@ -57,7 +57,7 @@ jobs:
       - name: 'Check if lock file exists'
         if: steps.prepare.outputs.run == 'true'
         id: find-artifact
-        uses: myparcelnl/actions/find-artifact@v4
+        uses: myparcelnl/actions/find-artifact@v5
         with:
           artifact-name: ${{ steps.prepare.outputs.artifact-name }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -101,5 +101,5 @@ jobs:
     needs:
       - schedule
     if: always() && contains(needs.*.result, 'failure')
-    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v4
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v5
     secrets: inherit
