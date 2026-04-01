@@ -30,7 +30,7 @@ jobs:
       NODE_LATEST: 22
       YARN_LATEST: 4
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ./.github/actions/login-ghcr
         with:
