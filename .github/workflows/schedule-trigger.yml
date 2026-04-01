@@ -39,7 +39,7 @@ jobs:
 
       - name: 'Check if workflow is scheduled to run'
         id: find-artifact
-        uses: myparcelnl/actions/find-artifact@v4
+        uses: myparcelnl/actions/find-artifact@v5
         with:
           artifact-name: ${{ steps.prepare.outputs.artifact-name }}
           token: ${{ secrets.GITHUB_TOKEN }}
