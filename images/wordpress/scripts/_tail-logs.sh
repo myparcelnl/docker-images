@@ -14,7 +14,5 @@ colorize_wp_logs() {
 tail-logs() {
   h2 "Tailing logs..."
 
-  exec tail -F -q -n+2 /tmp/wp-debug.log | colorize_wp_logs >> /proc/1/fd/1
-
-  exec tail -F -q -n+2 ./wp-content/**/*.log | colorize_wp_logs >> /proc/1/fd/1
+  exec tail -F -q -n+2 /tmp/wp-debug.log ./wp-content/**/*.log | colorize_wp_logs >> /proc/1/fd/1
 }
