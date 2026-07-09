@@ -1,22 +1,27 @@
 tail-logs() {
   h2 "Tailing logs..."
 
-  # WordPress core/PHP errors go to /tmp/wp-debug.log; the PDK/WooCommerce
-  # logger writes hash-named daily files under wp-content/uploads/wc-logs. The
-  # wc-logs filename changes on day rollover, so re-glob periodically and
-  # restart tail when the set of files changes - this picks up new files
-  # without needing a container restart.
-  shopt -s nullglob
+  # WordPress core/PHP errors go to /tmp/wp-debug.log; the PDK/WooCommerce logger
+  # writes hash-named daily files under wp-content/uploads/wc-logs. The wc-logs
+  # filename changes on day rollover, so re-glob periodically and restart tail
+  # when the set of files changes - picks up new files without a restart.
+  _log_files() {
+    printf '%s\n' /tmp/wp-debug.log
+    local f
+    for f in "${ROOT_DIR:-/var/www/html}"/wp-content/uploads/wc-logs/*.log; do
+      [ -e "$f" ] && printf '%s\n' "$f"
+    done
+  }
 
   {
     first=1
     while true; do
-      files=(/tmp/wp-debug.log ./wp-content/uploads/wc-logs/*.log)
+      mapfile -t files < <(_log_files)
 
-      # Dump existing content on first run (as before); only follow new
-      # content on subsequent restarts to avoid re-printing the whole file.
+      # First run: show the tail of existing files for context; on restart only
+      # follow new content to avoid re-dumping whole (persisted) files.
       if [ "$first" -eq 1 ]; then
-        start='-n+2'
+        start='-n200'
         first=0
       else
         start='-n0'
@@ -27,7 +32,7 @@ tail-logs() {
 
       snapshot="${files[*]}"
       while sleep 5; do
-        current=(/tmp/wp-debug.log ./wp-content/uploads/wc-logs/*.log)
+        mapfile -t current < <(_log_files)
         if [ "${current[*]}" != "$snapshot" ]; then
           break
         fi
