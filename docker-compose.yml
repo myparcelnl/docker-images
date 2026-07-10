@@ -15,14 +15,6 @@ services:
         WP_VERSION: ${WP_VERSION}
         PHP_VERSION: ${WP_PHP_VERSION}
 
-  prestashop:
-    image: ghcr.io/myparcelnl/prestashop:${PS_VERSION}-php${PS_PHP_VERSION}
-    build:
-      context: images/prestashop
-      args:
-        PS_VERSION: ${PS_VERSION}
-        PHP_VERSION: ${PS_PHP_VERSION}
-
   shopware:
     image: ghcr.io/myparcelnl/shopware:${SW_VERSION}-php${SW_PHP_VERSION}
     build:
