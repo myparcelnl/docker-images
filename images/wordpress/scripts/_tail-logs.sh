@@ -15,6 +15,7 @@ tail-logs() {
 
   {
     first=1
+    touch /tmp/wp-debug.log 2>/dev/null || true
     while true; do
       mapfile -t files < <(_log_files)
 
@@ -27,7 +28,7 @@ tail-logs() {
         start='-n0'
       fi
 
-      tail -F -q "$start" "${files[@]}" 2>/dev/null &
+      tail -F -q "$start" "${files[@]}" &
       tpid=$!
 
       snapshot="${files[*]}"
