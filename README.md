@@ -62,7 +62,7 @@ WordPress images based on `php-xd`.
 
 ### WordPress versions
 
-All versions returned by [the WordPress API](https://api.wordpress.org/core/version-check/1.7/), excluding end-of-life 4.x releases (we support 5.2 and up).
+All versions returned by [the WordPress API](https://api.wordpress.org/core/version-check/1.7/), excluding end-of-life 4.x releases (support floor: 5.2+; CI builds 5.0+).
 
 ### PHP versions
 
