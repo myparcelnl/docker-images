@@ -23,7 +23,7 @@ jobs:
         #language=bash
         run: |
           result=$(curl -s https://api.wordpress.org/core/version-check/1.7/)
-          # Skip WordPress 4.x (end-of-life, below our supported range of 5.2+).
+          # Skip WordPress 4.x (end-of-life). Support floor is 5.2+, but we keep all 5.x versions in the matrix for simplicity.
           versions=$(echo "$result" | jq -rc '[.offers[].version] | unique | map(select(startswith("4.") | not)) | reverse')
           latest=$(echo "$result" | jq -rc '[.offers[].version][0]')
 
