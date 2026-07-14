@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.wp.outputs.matrix }}
+      latest: ${{ steps.wp.outputs.latest }}
     steps:
       - uses: actions/checkout@v6
 
@@ -52,7 +53,7 @@ jobs:
           cache-mode: 'min'
           context: images/wordpress
           image: myparcelnl/wordpress
-          latest: ${{ matrix.wp }} == ${{needs.prepare-wp.outputs.latest}} && ${{ matrix.php }} == '8.4'
+          latest: ${{ matrix.wp == needs.prepare-wp.outputs.latest && matrix.php == '8.4' }}
           suffix: ${{ matrix.wp }}-php${{ matrix.php }}
           build-args: |
             PHP_VERSION=${{ matrix.php }}
