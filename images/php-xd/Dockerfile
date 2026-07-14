@@ -6,7 +6,7 @@ FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} AS base
 LABEL org.opencontainers.image.description='Alpine image with php-fpm, composer 2, XDebug and pcov.'
 
 # XDebug 3.1.6 is the last release supporting PHP 7.x; PHP 8 gets the latest.
-RUN export COMPOSER_VERSION="2.5.3" && \
+RUN export COMPOSER_VERSION="2.10.2" && \
     export XDEBUG_VERSION="" && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
         export XDEBUG_VERSION="3.1.6"; \
