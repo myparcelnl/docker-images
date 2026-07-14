@@ -15,9 +15,7 @@ jobs:
       matrix:
         image:
           - elasticsearch
-          - node
           - php-xd
-          - prestashop
           - shopware
           - wordpress
     steps:

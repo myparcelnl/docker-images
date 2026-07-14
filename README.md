@@ -28,37 +28,12 @@ PHP images based on `php:<version>-fpm-alpine`, with Composer 2.5 and pcov insta
 
 ### PHP versions
 
-- 7.1 (XDebug 2.9.8)
-- 7.2 (XDebug 3.1.6)
-- 7.3 (XDebug 3.1.6)
 - 7.4 (XDebug 3.1.6)
 - 8.0 (latest XDebug 3)
 - 8.1 (latest XDebug 3)
 - 8.2 (latest XDebug 3)
 - 8.3 (latest XDebug 3)
 - 8.4 (latest XDebug 3)
-
-## prestashop
-
-[View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/prestashop)
-
-PrestaShop images based on `php-xd`.
-
-> Example: `ghrc.io/myparcelnl/prestashop:8.0.1-php8.2`
-
-### PrestaShop versions
-
-All [tags in the `prestashop/prestashop` repository](https://api.github.com/repos/PrestaShop/PrestaShop/tags).
-
-### PHP versions
-
-- 7.1 (Prestashop 7)
-- 7.4 (Prestashop 7)
-- 8.0 (Prestashop 8)
-- 8.1 (Prestashop 8/9)
-- 8.2 (Prestashop 8/9)
-- 8.3 (Prestashop 9)
-- 8.4 (Prestashop 9)
 
 ## shopware
 
@@ -87,7 +62,7 @@ WordPress images based on `php-xd`.
 
 ### WordPress versions
 
-All versions returned by [the WordPress API](https://api.wordpress.org/core/version-check/1.7/).
+All versions returned by [the WordPress API](https://api.wordpress.org/core/version-check/1.7/), excluding end-of-life 4.x releases (support floor: 5.2+; CI builds 5.0+).
 
 ### PHP versions
 
