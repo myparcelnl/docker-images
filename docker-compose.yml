@@ -14,11 +14,3 @@ services:
       args:
         WP_VERSION: ${WP_VERSION}
         PHP_VERSION: ${WP_PHP_VERSION}
-
-  shopware:
-    image: ghcr.io/myparcelnl/shopware:${SW_VERSION}-php${SW_PHP_VERSION}
-    build:
-      context: images/shopware
-      args:
-        SW_VERSION: ${SW_VERSION}
-        PHP_VERSION: ${SW_PHP_VERSION}

@@ -27,7 +27,6 @@ jobs:
         image:
           - elasticsearch
           - php-xd
-          - shopware
           - wordpress
     steps:
       - uses: actions/checkout@v6
