@@ -35,23 +35,6 @@ PHP images based on `php:<version>-fpm-alpine`, with Composer 2.5 and pcov insta
 - 8.3 (latest XDebug 3)
 - 8.4 (latest XDebug 3)
 
-## shopware
-
-[View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/shopware)
-
-Shopware images based on `php-xd`.
-
-> Example: `ghrc.io/myparcelnl/shopware:6.5-php8.2`
-
-### Shopware versions
-
-- 6.5 (latest)
-
-### PHP versions
-
-- 8.2
-- 8.1
-
 ## wordpress
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/wordpress)
