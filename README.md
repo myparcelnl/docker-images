@@ -30,7 +30,9 @@ Every image uses the same base, so switching PHP versions only means switching t
 
 The images are rebuilt every week. PHP versions that are end of life (7.4, 8.0, 8.1) only get the security fixes that packages.sury.org backports.
 
-Images in this repo that build on `php-xd` (`wordpress`) follow every `php-xd` build through a `workflow_run` trigger in their workflow. A new image that builds on `php-xd` needs the same trigger. Images built outside this repo (for example in `docker-shopware` and `pdk`) only pick up a new `php-xd` when you build them with `docker compose build --pull`.
+Images built outside this repo (for example in `docker-shopware` and `pdk`) only pick up a new `php-xd` when you build them with `docker compose build --pull`.
+
+Before October 2026 the images were Alpine based. The `<version>-alpine<alpine version>`, `<version>-fpm-alpine` and `<version>-cli-alpine` tags are not rebuilt anymore and do not get security fixes. A Dockerfile that builds on `php-xd` and uses `apk`, `docker-php-ext-install` or `pecl` needs the `apt-get` commands below instead.
 
 ### PHP versions
 

@@ -3,11 +3,6 @@ name: 'Build wordpress images'
 on:
   workflow_dispatch:
 
-  # The wordpress images build on php-xd, so they follow every php-xd rebuild.
-  workflow_run:
-    workflows: ['Build php-xd images']
-    types: [completed]
-
 permissions:
   contents: read
   packages: write
@@ -17,8 +12,6 @@ concurrency:
 
 jobs:
   prepare-wp:
-    # A workflow_run event also fires when php-xd failed; only build on a new php-xd image.
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.wp.outputs.matrix }}

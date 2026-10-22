@@ -9,12 +9,15 @@ LABEL org.opencontainers.image.description='Ubuntu image with php-fpm, composer 
 ENV PHP_VERSION=${PHP_VERSION}
 # Config directory of the active PHP version. Downstream images put their ini files in ${PHP_INI_DIR}/mods-available and run phpenmod.
 ENV PHP_INI_DIR=/etc/php/${PHP_VERSION}
-ENV DEBIAN_FRONTEND=noninteractive
+
+# Build-time only; as ENV it would hide apt prompts in running containers too.
+ARG DEBIAN_FRONTEND=noninteractive
 
 COPY --from=composer:2.10.2 /usr/bin/composer /usr/bin/composer
 
 # packages.sury.org ships every PHP version from 7.4 up, with security fixes backported to the end-of-life versions.
-ADD https://packages.sury.org/debsuryorg-archive-keyring.deb /tmp/debsuryorg-archive-keyring.deb
+# The checksum pins the signing key every later apt install trusts. Update it when Sury publishes a new keyring package.
+ADD --checksum=sha256:7511384559c9ddf1d5ce5f60be429ae9d4e7d01d9480d6f1b7a30c0810cf8b60 https://packages.sury.org/debsuryorg-archive-keyring.deb /tmp/debsuryorg-archive-keyring.deb
 
 RUN apt-get update && \
     apt-get upgrade -y && \

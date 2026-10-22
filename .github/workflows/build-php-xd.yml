@@ -34,8 +34,8 @@ jobs:
           context: images/php-xd
           image: myparcelnl/php-xd
           suffix: ${{ matrix.php }}
-          # A cached apt layer would keep the old packages, so the weekly rebuild starts from scratch.
-          no-cache: ${{ github.event_name == 'schedule' }}
+          # A cached apt layer would keep the old packages, so every build starts from scratch.
+          no-cache: 'true'
           build-args: |
             PHP_VERSION=${{ matrix.php }}
 
