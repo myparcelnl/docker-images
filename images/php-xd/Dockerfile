@@ -4,7 +4,7 @@ FROM ubuntu:24.04 AS base
 
 ARG PHP_VERSION
 
-LABEL org.opencontainers.image.description='Ubuntu image with php-fpm, composer 2, XDebug and pcov. PHP packages from packages.sury.org.'
+LABEL org.opencontainers.image.description='Ubuntu image with php-fpm, composer 2, XDebug and pcov. PHP packages from the ppa:ondrej/php PPA.'
 
 ENV PHP_VERSION=${PHP_VERSION}
 # Config directory of the active PHP version. Downstream images put their ini files in ${PHP_INI_DIR}/mods-available and run phpenmod.
@@ -15,23 +15,28 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY --from=composer:2.10.2 /usr/bin/composer /usr/bin/composer
 
-# packages.sury.org ships every PHP version from 7.4 up, with security fixes backported to the end-of-life versions.
-# The checksum pins the signing key every later apt install trusts. Update it when Sury publishes a new keyring package.
-ADD --checksum=sha256:7511384559c9ddf1d5ce5f60be429ae9d4e7d01d9480d6f1b7a30c0810cf8b60 https://packages.sury.org/debsuryorg-archive-keyring.deb /tmp/debsuryorg-archive-keyring.deb
+# Ondřej Surý's PPA ships every PHP version from 7.4 up, with security fixes backported to the end-of-life versions.
+# It is the same source as packages.sury.org, but Launchpad builds arm64 at the same time as amd64.
+# ondrej-php.gpg is the PPA signing key, fingerprint B8DC7E53946656EFBCE4C1DD71DAEAAB4AD4CAB6 (see the PPA page on Launchpad).
+COPY ondrej-php.gpg /usr/share/keyrings/ondrej-php.gpg
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    # apt needs it to reach packages.sury.org over https
+    # apt needs it to reach the PPA over https
     apt-get install -y --no-install-recommends ca-certificates && \
-    dpkg -i /tmp/debsuryorg-archive-keyring.deb && \
-    rm /tmp/debsuryorg-archive-keyring.deb && \
-    echo 'deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ noble main' > /etc/apt/sources.list.d/php.list && \
+    echo 'deb [signed-by=/usr/share/keyrings/ondrej-php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble main' > /etc/apt/sources.list.d/php.list && \
     apt-get update && \
+    # The extensions the official php images compile in come as separate packages here
     apt-get install -y --no-install-recommends \
       php${PHP_VERSION}-cli \
+      php${PHP_VERSION}-curl \
       php${PHP_VERSION}-fpm \
+      php${PHP_VERSION}-mbstring \
+      php${PHP_VERSION}-mysql \
       php${PHP_VERSION}-pcov \
+      php${PHP_VERSION}-sqlite3 \
       php${PHP_VERSION}-xdebug \
+      php${PHP_VERSION}-xml \
       # Composer needs it to extract packages
       unzip \
     && \

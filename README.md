@@ -24,11 +24,11 @@ docker compose build
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/php-xd)
 
-PHP images on Ubuntu 24.04 with php-fpm and php-cli from [packages.sury.org](https://packages.sury.org/php/), Composer 2 and pcov installed, and XDebug enabled. Use them for both CLI and web applications. `php-fpm` listens on port 9000.
+PHP images on Ubuntu 24.04 with php-fpm and php-cli from [Ondřej Surý's PPA](https://launchpad.net/~ondrej/+archive/ubuntu/php), Composer 2 and pcov installed, and XDebug enabled. Use them for both CLI and web applications. `php-fpm` listens on port 9000.
 
 Every image uses the same base, so switching PHP versions only means switching the tag: `ghcr.io/myparcelnl/php-xd:<version>`.
 
-The images are rebuilt every week. PHP versions that are end of life (7.4, 8.0, 8.1) only get the security fixes that packages.sury.org backports.
+The images are rebuilt every week. PHP versions that are end of life (7.4, 8.0, 8.1) only get the security fixes that the PPA backports.
 
 Images built outside this repo (for example in `docker-shopware` and `pdk`) only pick up a new `php-xd` when you build them with `docker compose build --pull`.
 
@@ -46,7 +46,7 @@ Before October 2026 the images were Alpine based. The `<version>-alpine<alpine v
 
 ### Adding extensions in a downstream image
 
-Install the Sury package for the extension. `PHP_VERSION` and `PHP_INI_DIR` (`/etc/php/<version>`) are set in the image.
+Install the PPA package for the extension. `PHP_VERSION` and `PHP_INI_DIR` (`/etc/php/<version>`) are set in the image.
 
 ```dockerfile
 RUN apt-get update && \
