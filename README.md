@@ -24,7 +24,13 @@ docker compose build
 
 [View on GitHub Container Registry 📦](https://ghcr.io/myparcelnl/php-xd)
 
-PHP images based on `php:<version>-fpm-alpine`, with Composer 2.5 and pcov installed, and XDebug enabled. Based on the fpm variant of the official PHP images, so you can use it for both CLI and web applications.
+PHP images on Ubuntu 24.04 with php-fpm and php-cli from [packages.sury.org](https://packages.sury.org/php/), Composer 2 and pcov installed, and XDebug enabled. Use them for both CLI and web applications. `php-fpm` listens on port 9000.
+
+Every image uses the same base, so switching PHP versions only means switching the tag: `ghcr.io/myparcelnl/php-xd:<version>`.
+
+The images are rebuilt every week. PHP versions that are end of life (7.4, 8.0, 8.1) only get the security fixes that packages.sury.org backports.
+
+Images in this repo that build on `php-xd` (`wordpress`) follow every `php-xd` build through a `workflow_run` trigger in their workflow. A new image that builds on `php-xd` needs the same trigger. Images built outside this repo (for example in `docker-shopware` and `pdk`) only pick up a new `php-xd` when you build them with `docker compose build --pull`.
 
 ### PHP versions
 
@@ -34,6 +40,24 @@ PHP images based on `php:<version>-fpm-alpine`, with Composer 2.5 and pcov insta
 - 8.2 (latest XDebug 3)
 - 8.3 (latest XDebug 3)
 - 8.4 (latest XDebug 3)
+- 8.5 (latest XDebug 3)
+
+### Adding extensions in a downstream image
+
+Install the Sury package for the extension. `PHP_VERSION` and `PHP_INI_DIR` (`/etc/php/<version>`) are set in the image.
+
+```dockerfile
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends php${PHP_VERSION}-zip && \
+    rm -rf /var/lib/apt/lists/*
+```
+
+To add PHP settings, put an ini file in `${PHP_INI_DIR}/mods-available` and enable it for cli and fpm with `phpenmod`:
+
+```dockerfile
+RUN echo 'memory_limit = 512M' > ${PHP_INI_DIR}/mods-available/memory-limit.ini && \
+    phpenmod memory-limit
+```
 
 ## wordpress
 
