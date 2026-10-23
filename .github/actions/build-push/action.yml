@@ -39,6 +39,11 @@ inputs:
     required: false
     default: 'false'
 
+  write-cache:
+    description: 'Export the layers to the GitHub Actions cache after the build'
+    required: false
+    default: 'true'
+
 runs:
   using: composite
   steps:
@@ -67,7 +72,7 @@ runs:
         no-cache: ${{ inputs.no-cache == 'true' }}
         platforms: 'linux/amd64,linux/arm64'
         cache-from: type=gha,scope=build-${{ inputs.suffix }}
-        cache-to: type=gha,scope=build-${{ inputs.suffix }},mode=${{ inputs.cache-mode }}
+        cache-to: ${{ inputs.write-cache == 'true' && format('type=gha,scope=build-{0},mode={1}', inputs.suffix, inputs.cache-mode) || '' }}
 
     - name: 'Report'
       shell: bash

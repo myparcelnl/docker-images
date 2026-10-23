@@ -34,8 +34,9 @@ jobs:
           context: images/php-xd
           image: myparcelnl/php-xd
           suffix: ${{ matrix.php }}
-          # A cached apt layer would keep the old packages, so every build starts from scratch.
+          # A cached apt layer would keep the old packages, so every build starts from scratch and nothing reads the cache back.
           no-cache: 'true'
+          write-cache: 'false'
           build-args: |
             PHP_VERSION=${{ matrix.php }}
 

@@ -41,6 +41,8 @@ RUN apt-get update && \
       unzip \
     && \
     rm -rf /var/lib/apt/lists/* && \
+    # Ubuntu's php.ini changes error_reporting, display_errors, zend.assertions, memory_limit and variables_order. Without it PHP uses its built-in defaults, like the official php images.
+    rm ${PHP_INI_DIR}/cli/php.ini ${PHP_INI_DIR}/fpm/php.ini && \
     # Same binary name as the official php images, so `php-fpm` works without the version suffix
     ln -s /usr/sbin/php-fpm${PHP_VERSION} /usr/local/sbin/php-fpm && \
     # Configure XDebug
