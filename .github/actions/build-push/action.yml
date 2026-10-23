@@ -34,6 +34,16 @@ inputs:
     required: false
     default: 'max'
 
+  no-cache:
+    description: 'Build every layer again instead of using the cache'
+    required: false
+    default: 'false'
+
+  write-cache:
+    description: 'Export the layers to the GitHub Actions cache after the build'
+    required: false
+    default: 'true'
+
 runs:
   using: composite
   steps:
@@ -54,18 +64,17 @@ runs:
 
     - uses: docker/build-push-action@v7
       name: build-push
-      continue-on-error: true
       with:
         context: ${{ inputs.context }}
         build-args: ${{ inputs.build-args }}
         tags: ${{ steps.meta.outputs.tags }}
         push: true
+        no-cache: ${{ inputs.no-cache == 'true' }}
         platforms: 'linux/amd64,linux/arm64'
         cache-from: type=gha,scope=build-${{ inputs.suffix }}
-        cache-to: type=gha,scope=build-${{ inputs.suffix }},mode=${{ inputs.cache-mode }}
+        cache-to: ${{ inputs.write-cache == 'true' && format('type=gha,scope=build-{0},mode={1}', inputs.suffix, inputs.cache-mode) || '' }}
 
     - name: 'Report'
-      if: steps.build-push.outcome == 'success'
       shell: bash
       run: |
         echo "✅ Built ${{ inputs.image }}/${{ inputs.suffix }}" >> $GITHUB_STEP_SUMMARY
