@@ -11,35 +11,30 @@ ARG ROOT_DIR=/var/www/html
 
 WORKDIR ${ROOT_DIR}
 
-RUN apk update && \
+RUN apt-get update && \
     # Install dependencies
-    apk add --no-cache \
+    apt-get install -y --no-install-recommends \
       # To run in AWS
       nginx \
-      # Needed for php extensions
-      $PHPIZE_DEPS \
-      # needed for wait-for-it
-      bash \
+      # To download wp-cli, wait-for-it and envsubst
+      curl \
       # Needed for wp-cli
       less \
-      # For zip extension
-      libzip-dev \
       # Needed for database connection
       mysql-client \
       # Needed to build JS
       npm \
       nodejs \
       # Used to not have to switch user
-      sudo && \
-    # Install php extensions
-    docker-php-ext-install \
-      mysqli \
-      opcache \
-      pdo_mysql \
-      zip && \
-    pecl install redis && \
-    rm -rf /tmp/pear && \
-    docker-php-ext-enable redis && \
+      sudo \
+      # php extensions: mysqli and pdo_mysql come from php-mysql
+      php${PHP_VERSION}-mysql \
+      php${PHP_VERSION}-redis \
+      php${PHP_VERSION}-zip \
+    && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Ubuntu's nginx serves its own default site; ours goes in conf.d
+    rm /etc/nginx/sites-enabled/default && \
     # Install wp-cli
     curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp && \
     chmod +x /usr/local/bin/wp && \
@@ -70,13 +65,14 @@ RUN apk update && \
     chown -R www-data .
 
 COPY ./scripts/         /tmp/scripts
-COPY ./config/php-fpm   /usr/local/etc/php-fpm.d
-COPY ./config/php       /usr/local/etc/php
+# Loads after the php-xd pool config and overrides daemonize and the log targets
+COPY ./config/php-fpm   ${PHP_INI_DIR}/fpm/pool.d
+COPY ./config/php       ${PHP_INI_DIR}
+RUN phpenmod wordpress
 COPY ./config/wordpress /tmp/wordpress
 # Copy nginx config
-COPY ./etc/nginx/http.d/* /etc/nginx/http.d/
+COPY ./etc/nginx/conf.d/* /etc/nginx/conf.d/
 
-ENV PHP_VERSION=${PHP_VERSION}
 ENV WP_VERSION=${WP_VERSION}
 
 ###
@@ -137,12 +133,14 @@ FROM wordpress AS dev
 COPY ["./config/.zshrc", "/root/.zshrc"]
 
 # Add development tools
-RUN apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
       vim \
       zsh  \
       # Needed for oh-my-zsh
       git \
     && \
+    rm -rf /var/lib/apt/lists/* && \
     # Install oh-my-zsh \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended && \
     # Restore .zshrc
@@ -158,7 +156,8 @@ RUN apk add --no-cache \
     curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s "https://blackfire.io/api/v1/releases/probe/php/linux/$architecture/$version" && \
     tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire && \
     mv /tmp/blackfire/blackfire-*.so "$(php -r "echo ini_get ('extension_dir');")/blackfire.so" && \
-    printf "blackfire.agent_socket=tcp://blackfire:8307\n" > "$PHP_INI_DIR/conf.d/blackfire.ini" && \
+    printf "blackfire.agent_socket=tcp://blackfire:8307\n" > "$PHP_INI_DIR/mods-available/blackfire.ini" && \
+    phpenmod blackfire && \
     rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz && \
     blackfire php:install
 
