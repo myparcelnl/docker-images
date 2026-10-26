@@ -1,0 +1,66 @@
+name: 'Clean up GHCR'
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Only log what would be deleted'
+        type: boolean
+        default: true
+
+  # Mondays after the weekly php-xd build and the wordpress builds that follow it.
+  schedule:
+    - cron: '0 9 * * 1'
+
+permissions:
+  packages: write
+
+# The action must not run twice on the same package at the same time.
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
+
+jobs:
+  php-xd:
+    runs-on: ubuntu-22.04
+    steps:
+      # Tags from the old naming schemes and the Alpine variants; no workflow builds them anymore.
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        with:
+          package: php-xd
+          delete-untagged: true
+          delete-tags: '^7\.[1-3]$|^(main|latest|sha-[0-9a-f]+)-|-(cli-|fpm-)?alpine'
+          use-regex: true
+          validate: true
+          dry-run: ${{ env.DRY_RUN }}
+
+  wordpress:
+    runs-on: ubuntu-22.04
+    steps:
+      # build-wordpress.yml builds the versions wordpress.org offers, times PHP 8.4, 8.3, 8.2 and 7.4.
+      # Every other tag is stale.
+      - name: 'List the tags no build produces'
+        id: stale
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        #language=bash
+        run: |
+          versions=$(curl -sf https://api.wordpress.org/core/version-check/1.7/ | jq -r '[.offers[].version] | unique | map(select(startswith("4.") | not)) | .[]')
+          # An empty list would mark every tag as stale.
+          [ -n "$versions" ] || { echo "::error::wordpress.org returned no versions"; exit 1; }
+          expected=$( (for v in $versions; do for p in 8.4 8.3 8.2 7.4; do echo "$v-php$p"; done; done; echo latest) | sort)
+          all=$(gh api "orgs/${{ github.repository_owner }}/packages/container/wordpress/versions?per_page=100" --paginate --jq '.[].metadata.container.tags[]' | sort)
+          stale=$(comm -23 <(echo "$all") <(echo "$expected") | paste -sd, -)
+          echo "Stale tags: $(echo "$stale" | tr ',' '\n' | grep -c .)"
+          echo "tags=$stale" >> $GITHUB_OUTPUT
+
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        with:
+          package: wordpress
+          delete-untagged: true
+          delete-tags: ${{ steps.stale.outputs.tags }}
+          validate: true
+          dry-run: ${{ env.DRY_RUN }}
