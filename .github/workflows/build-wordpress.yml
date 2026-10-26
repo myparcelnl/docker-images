@@ -44,6 +44,8 @@ jobs:
       - prepare-wp
     strategy:
       fail-fast: false
+      # GHCR allows 2000 requests per minute; the full matrix pushing at once exceeds that.
+      max-parallel: 10
       matrix:
         php: ['8.4', '8.3', '8.2', '7.4']
         wp: ${{ fromJSON(needs.prepare-wp.outputs.matrix) }}
