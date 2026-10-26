@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       # Tags from the old naming schemes and the Alpine variants; no workflow builds them anymore.
-      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+      - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           package: php-xd
           delete-untagged: true
@@ -57,7 +57,7 @@ jobs:
           echo "Stale tags: $(echo "$stale" | tr ',' '\n' | grep -c .)"
           echo "tags=$stale" >> $GITHUB_OUTPUT
 
-      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+      - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           package: wordpress
           delete-untagged: true
