@@ -3,6 +3,10 @@ name: 'Build php-xd images'
 on:
   workflow_dispatch:
 
+  # Weekly rebuild, so security fixes in the base image and the PHP packages reach our images.
+  schedule:
+    - cron: '0 5 * * 1'
+
 permissions:
   contents: read
   packages: write
@@ -17,13 +21,6 @@ jobs:
       fail-fast: false
       matrix:
         php: ['8.5', '8.4', '8.3', '8.2', '8.1', '8.0', '7.4']
-        alpine:
-          [
-            '3.19',
-            '3.20',
-            '3.22',
-            '',
-          ]
     steps:
       - uses: actions/checkout@v7
 
@@ -36,9 +33,11 @@ jobs:
           registry: ghcr.io
           context: images/php-xd
           image: myparcelnl/php-xd
-          suffix: ${{ matrix.php }}${{ matrix.alpine != '' && format('-alpine{0}', matrix.alpine) || '' }}
+          suffix: ${{ matrix.php }}
+          # A cached apt layer would keep the old packages, so every build starts from scratch and nothing reads the cache back.
+          no-cache: 'true'
+          write-cache: 'false'
           build-args: |
-            ALPINE_VERSION=${{ matrix.alpine }}
             PHP_VERSION=${{ matrix.php }}
 
   notify-on-failure:

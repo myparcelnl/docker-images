@@ -1,10 +1,9 @@
 services:
   php-xd:
-    image: ghcr.io/myparcelnl/php-xd:${PHP_XD_PHP_VERSION}-alpine${PHP_XD_ALPINE_VERSION}
+    image: ghcr.io/myparcelnl/php-xd:${PHP_XD_PHP_VERSION}
     build:
       context: images/php-xd
       args:
-        ALPINE_VERSION: ${PHP_XD_ALPINE_VERSION}
         PHP_VERSION: ${PHP_XD_PHP_VERSION}
 
   wordpress:
