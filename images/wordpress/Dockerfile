@@ -6,8 +6,14 @@ ARG PHP_VERSION="7.4"
 FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION} AS wordpress
 
 ARG WP_VERSION="6.1.1"
+ARG PNPM_VERSION="12.14.0"
 
 ARG ROOT_DIR=/var/www/html
+
+ENV PNPM_HOME=/opt/pnpm
+ENV PATH="${PNPM_HOME}/bin:${PATH}"
+# Next to the composer cache, so a cache volume on /tmp/.cache keeps both
+ENV pnpm_config_store_dir=/tmp/.cache/pnpm
 
 WORKDIR ${ROOT_DIR}
 
@@ -22,9 +28,6 @@ RUN apt-get update && \
       less \
       # Needed for database connection
       mysql-client \
-      # Needed to build JS
-      npm \
-      nodejs \
       # Used to not have to switch user
       sudo \
       # php extensions: mysqli and pdo_mysql come from php-mysql
@@ -45,11 +48,10 @@ RUN apt-get update && \
     mkdir -p /var/log/php-fpm && \
     # Set composer cache location
     composer config --global cache-dir /tmp/.cache/composer && \
-    # Set up Yarn
-    npm i -g yarn && \
+    # Install pnpm to build JS. pnpm downloads Node.js from devEngines.runtime of each project.
+    curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION="${PNPM_VERSION}" ENV="$HOME/.shrc" SHELL="$(which sh)" sh - && \
+    chmod -R a+rX "${PNPM_HOME}" && \
     # Clear cache and unnecessary dependencies
-    npm cache clean --force && \
-    yarn cache clean && \
     composer clear-cache && \
     # Install envsubst \
     curl "https://raw.githubusercontent.com/EdieLemoine/envsubst/main/install.sh" -o /tmp/install-envsubst.sh && \
