@@ -53,7 +53,6 @@ RUN apt-get update && \
     curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION="${PNPM_VERSION}" PNPM_NO_MODIFY_PATH=1 sh - && \
     # A failed download gives sh an empty script, which exits with 0, so check that pnpm is there.
     pnpm --version && \
-    chmod -R a+rX "${PNPM_HOME}" && \
     # Clear cache and unnecessary dependencies
     composer clear-cache && \
     # Install envsubst \
