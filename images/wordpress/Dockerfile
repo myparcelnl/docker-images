@@ -6,7 +6,7 @@ ARG PHP_VERSION="7.4"
 FROM ghcr.io/myparcelnl/php-xd:${PHP_VERSION} AS wordpress
 
 ARG WP_VERSION="6.1.1"
-ARG PNPM_VERSION="12.14.0"
+ARG PNPM_VERSION="12.21.0"
 
 ARG ROOT_DIR=/var/www/html
 
@@ -49,7 +49,10 @@ RUN apt-get update && \
     # Set composer cache location
     composer config --global cache-dir /tmp/.cache/composer && \
     # Install pnpm to build JS. pnpm downloads Node.js from devEngines.runtime of each project.
-    curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION="${PNPM_VERSION}" ENV="$HOME/.shrc" SHELL="$(which sh)" sh - && \
+    # PNPM_NO_MODIFY_PATH skips the shell setup: PATH is set above.
+    curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION="${PNPM_VERSION}" PNPM_NO_MODIFY_PATH=1 sh - && \
+    # A failed download gives sh an empty script, which exits with 0, so check that pnpm is there.
+    pnpm --version && \
     chmod -R a+rX "${PNPM_HOME}" && \
     # Clear cache and unnecessary dependencies
     composer clear-cache && \
