@@ -36,7 +36,7 @@ jobs:
 
       - name: 'Check if workflow is scheduled to run'
         id: find-artifact
-        uses: myparcelnl/actions/find-artifact@v5
+        uses: myparcelnl/actions/find-artifact@v6
         with:
           artifact-name: ${{ steps.prepare.outputs.artifact-name }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -82,5 +82,5 @@ jobs:
     needs:
       - trigger
     if: always() && contains(needs.*.result, 'failure')
-    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v5
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v6
     secrets: inherit
