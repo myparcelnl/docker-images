@@ -6,5 +6,5 @@ install-dependencies-composer() {
 }
 
 install-dependencies-node() {
-  yarn install "$@"
+  pnpm install "$@"
 }
