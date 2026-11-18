@@ -69,7 +69,7 @@ WordPress images based on `php-xd`, with pnpm 12 to build the JS of a plugin. Th
 
 Before November 2026 the `wordpress` images had Node.js and Yarn. Docker keeps using a local image until you pull a new one. After that, a plugin branch that is still on Yarn fails with `ERR_PNPM_OTHER_PM_EXPECTED`. Rebase that branch onto `main`, which brings pnpm. When that is not possible, build the JS with Yarn on your own machine. The weekly cleanup deletes the older images, so you cannot pin one.
 
-> Example: `ghrc.io/myparcelnl/wordpress:6.2.2-php7.4`
+> Example: `ghcr.io/myparcelnl/wordpress:6.2.2-php7.4`
 
 ### WordPress versions
 
