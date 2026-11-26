@@ -1,0 +1,106 @@
+# Test stack for the Magento image: the same containers as docker-magento, without Traefik.
+# Set IMAGE, MARIADB_VERSION and OPENSEARCH_VERSION (smoke.sh takes them from versions.json).
+# Optional: WEB_PORT (8080), FULL_URL (http://localhost:<WEB_PORT>), WITH_SEED (1), MAGENTO_CRYPT_KEY, MAGENTO_MODE (production),
+# and the plugin modes PLUGIN_VERSION, SDK_VERSION, PLUGIN_PATH, SDK_PATH, HYVA_MODULE_PATH, WITH_HYVA.
+name: magento-image-test
+
+services:
+  web:
+    image: nginx:alpine
+    depends_on:
+      # The volume has code only after the php entrypoint synced it
+      php:
+        condition: service_healthy
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    volumes:
+      - web-data:/var/www/html:ro
+      - ../config/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+  php:
+    image: ${IMAGE:?Set IMAGE to the image under test}
+    depends_on:
+      db:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+    environment:
+      BASE_URL: localhost:${WEB_PORT:-8080}
+      FULL_URL: ${FULL_URL:-http://localhost:${WEB_PORT:-8080}}
+      WITH_SEED: ${WITH_SEED:-1}
+      MAGENTO_CRYPT_KEY: ${MAGENTO_CRYPT_KEY:-}
+      MAGENTO_MODE: ${MAGENTO_MODE:-production}
+      PLUGIN_VERSION: ${PLUGIN_VERSION:-}
+      SDK_VERSION: ${SDK_VERSION:-}
+      PLUGIN_PATH: ${PLUGIN_PATH:-}
+      SDK_PATH: ${SDK_PATH:-}
+      HYVA_MODULE_PATH: ${HYVA_MODULE_PATH:-}
+      WITH_HYVA: ${WITH_HYVA:-0}
+      DB_HOST: db
+      DB_NAME: magento
+      DB_USER: magento
+      DB_PASSWORD: magento
+      OPENSEARCH_HOST: opensearch
+      OPENSEARCH_PORT: '9200'
+    healthcheck:
+      # The entrypoint writes the marker just before it starts php-fpm
+      test:
+        [
+          'CMD',
+          'bash',
+          '-c',
+          'test -e /tmp/magento-ready && exec 3<>/dev/tcp/127.0.0.1/9000',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20m
+      start_interval: 5s
+    volumes:
+      - web-data:/var/www/html
+    # Empty vendor/ in each checkout, as in docker-magento: setup:di:compile loads the checkout's own vendor/ and fails.
+    tmpfs:
+      - /var/www/html/plugins/magento/vendor
+      - /var/www/html/plugins/sdk/vendor
+      - /var/www/html/plugins/hyva-checkout/vendor
+
+  db:
+    image: mariadb:${MARIADB_VERSION:?Set MARIADB_VERSION}
+    environment:
+      MARIADB_DATABASE: magento
+      MARIADB_USER: magento
+      MARIADB_PASSWORD: magento
+      MARIADB_ROOT_PASSWORD: magento
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - db-data:/var/lib/mysql
+
+  opensearch:
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION:?Set OPENSEARCH_VERSION}
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: 'true'
+      DISABLE_INSTALL_DEMO_CONFIG: 'true'
+      OPENSEARCH_JAVA_OPTS: -Xms1g -Xmx1g
+      # Above 90 % Docker disk use, OpenSearch blocks new indexes; the store save then skips the sales sequences
+      cluster.routing.allocation.disk.threshold_enabled: 'false'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >/dev/null",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 36
+    volumes:
+      - search-data:/usr/share/opensearch/data
+
+volumes:
+  db-data:
+  search-data:
+  web-data:

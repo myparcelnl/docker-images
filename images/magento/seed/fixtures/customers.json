@@ -1,0 +1,26 @@
+[
+  {
+    "website": "nl",
+    "firstname": "Daan",
+    "lastname": "Visser",
+    "email": "customer-nl@example.com",
+    "password": "Test1234!",
+    "default_address_id": "nl-1"
+  },
+  {
+    "website": "be",
+    "firstname": "Lotte",
+    "lastname": "Peeters",
+    "email": "customer-be@example.com",
+    "password": "Test1234!",
+    "default_address_id": "be-1"
+  },
+  {
+    "website": "it",
+    "firstname": "Giulia",
+    "lastname": "Rossi",
+    "email": "customer-it@example.com",
+    "password": "Test1234!",
+    "default_address_id": "it-1"
+  }
+]

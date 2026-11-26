@@ -1,0 +1,36 @@
+[
+  {
+    "magento": "2.4.6-p15",
+    "php": ["8.2"],
+    "mariadb": "10.11",
+    "opensearch": "3.10.0",
+    "allow_failure": true,
+    "accepted_advisories": [
+      "PKSA-w9tt-7782-78jx",
+      "PKSA-kbc7-dq62-pt7d",
+      "PKSA-qv5y-crcz-9nxw",
+      "PKSA-t85t-2sdq-9qvz"
+    ]
+  },
+  {
+    "magento": "2.4.7-p10",
+    "php": ["8.2", "8.3"],
+    "mariadb": "11.8",
+    "opensearch": "3.10.0",
+    "accepted_advisories": ["PKSA-w9tt-7782-78jx"]
+  },
+  {
+    "magento": "2.4.8-p5",
+    "php": ["8.3", "8.4"],
+    "mariadb": "11.8",
+    "opensearch": "3.10.0",
+    "accepted_advisories": []
+  },
+  {
+    "magento": "2.4.9",
+    "php": ["8.4", "8.5"],
+    "mariadb": "12.3",
+    "opensearch": "3.10.0",
+    "accepted_advisories": []
+  }
+]

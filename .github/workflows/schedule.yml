@@ -16,6 +16,7 @@ on:
         type: choice
         options:
           - elasticsearch
+          - magento
           - php-xd
           - wordpress
 
@@ -26,6 +27,7 @@ jobs:
       matrix:
         image:
           - elasticsearch
+          - magento
           - php-xd
           - wordpress
     steps:

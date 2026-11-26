@@ -1,0 +1,272 @@
+name: 'Build magento images'
+
+on:
+  workflow_dispatch:
+
+  # Every Monday, so that the images get the new plugin release and the dependency fixes.
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  IMAGE: ghcr.io/myparcelnl/magento
+  # The pair that also gets a smoke test without the seed module (WITH_SEED=0)
+  NO_SEED_MINOR: '2.4.8'
+  NO_SEED_PHP: '8.3'
+
+jobs:
+  prepare:
+    runs-on: ubuntu-22.04
+    outputs:
+      build: ${{ steps.matrix.outputs.build }}
+      smoke: ${{ steps.matrix.outputs.smoke }}
+      cache-bust: ${{ steps.matrix.outputs.cache-bust }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 'Read the matrix from versions.json'
+        id: matrix
+        shell: bash
+        #language=bash
+        run: |
+          build=$(jq -c '[.[] | . as $v | .php[] | {
+            magento: $v.magento,
+            php: .,
+            minor: ($v.magento | sub("-p[0-9]+$"; "")),
+            mariadb: $v.mariadb,
+            opensearch: $v.opensearch,
+            # build-push-action reads build-args as CSV: a field with quotes must be quoted, with "" for each quote
+            advisories_arg: ("\"ACCEPTED_ADVISORIES=" + ($v.accepted_advisories // [] | tojson | gsub("\""; "\"\"")) + "\""),
+            scd_on_start: ($v.scd_on_start // false),
+            allow_failure: ($v.allow_failure // false)
+          }]' images/magento/versions.json)
+
+          no_seed=$(jq -c --arg minor "$NO_SEED_MINOR" --arg php "$NO_SEED_PHP" \
+            '[.[] | select(.minor == $minor and .php == $php) | . + {with_seed: "0"}]' <<<"$build")
+          [ "$(jq length <<<"$no_seed")" = 1 ] \
+            || { echo "::error::versions.json has no Magento $NO_SEED_MINOR with PHP $NO_SEED_PHP for the WITH_SEED=0 smoke test"; exit 1; }
+          smoke=$(jq -c --argjson extra "$no_seed" '[.[] | . + {with_seed: "1"}] + $extra' <<<"$build")
+
+          {
+            echo "build=$build"
+            echo "smoke=$smoke"
+            echo "cache-bust=$(date -u +%F)"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-22.04
+    needs:
+      - prepare
+    # INT-2362: 2.4.6-p15 fails setup:di:compile until a plugin release has myparcelnl/magento PR #1050.
+    # versions.json sets allow_failure for it. Remove the flag after that release.
+    continue-on-error: ${{ matrix.allow_failure }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.build) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/login-ghcr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # On main, the build pushes only a run tag. The promote job moves the user tags after the smoke test.
+      # On a branch, it pushes only <branch>-<magento>-php<php>.
+      - uses: ./.github/actions/build-push
+        id: build
+        with:
+          registry: ghcr.io
+          context: images/magento
+          image: myparcelnl/magento
+          suffix: ${{ matrix.magento }}-php${{ matrix.php }}
+          raw-tag-on-branch: 'false'
+          tags: ${{ github.ref == 'refs/heads/main' && format('{0}:ci-{1}-{2}-php{3}', env.IMAGE, github.run_id, matrix.magento, matrix.php) || '' }}
+          # The repository has one Actions cache with a 10 GB limit. The Magento layers (about 2 GB per platform
+          # and pair) would push out the php-xd and wordpress caches, and CACHE_BUST makes most of them useless.
+          write-cache: 'false'
+          # CACHE_BUST changes every day, so Composer runs again and does not use a cached layer.
+          build-args: |
+            PHP_VERSION=${{ matrix.php }}
+            MAGENTO_VERSION=${{ matrix.magento }}
+            ${{ matrix.advisories_arg }}
+            SCD_ON_START=${{ matrix.scd_on_start }}
+            CACHE_BUST=${{ needs.prepare.outputs.cache-bust }}
+
+      # A Dockerfile cannot set a label from a RUN result. This second build adds the installed plugin and SDK
+      # versions as labels (the smoke test reads nl.myparcel.plugin.version) and pushes the same tags again.
+      # It has no RUN step, so it only writes new image configs.
+      - name: 'Add the version labels'
+        env:
+          SOURCE: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+          TAGS: ${{ steps.build.outputs.tags }}
+          SUFFIX: ${{ matrix.magento }}-php${{ matrix.php }}
+        shell: bash
+        #language=bash
+        run: |
+          labels=$(bash images/magento/tests/smoke.sh labels "$SOURCE")
+          args=()
+          while IFS= read -r label; do
+            args+=(--label "$label")
+          done <<<"$labels"
+
+          for tag in $TAGS; do
+            args+=(--tag "$tag")
+          done
+
+          echo "FROM $SOURCE" | docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --metadata-file "$RUNNER_TEMP/metadata.json" \
+            --push \
+            "${args[@]}" \
+            -
+          jq -r '."containerimage.digest"' "$RUNNER_TEMP/metadata.json" > "$RUNNER_TEMP/digest"
+
+          {
+            echo "Labels of \`$SUFFIX\`:"
+            echo '```'
+            echo "$labels"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: digest-${{ matrix.magento }}-php${{ matrix.php }}
+          path: ${{ runner.temp }}/digest
+          if-no-files-found: error
+          retention-days: 1
+
+  smoke:
+    name: 'smoke (${{ matrix.magento }}, ${{ matrix.php }}, WITH_SEED=${{ matrix.with_seed }})'
+    runs-on: ubuntu-22.04
+    needs:
+      - prepare
+      - build
+    # Also test the other pairs when one build failed
+    if: ${{ !cancelled() && needs.prepare.result == 'success' }}
+    # INT-2362, see the build job
+    continue-on-error: ${{ matrix.allow_failure }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.smoke) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/login-ghcr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: digest-${{ matrix.magento }}-php${{ matrix.php }}
+          path: ${{ runner.temp }}/digest
+
+      # smoke.sh tests the local tag <magento>-php<php>. The digest is the image that this run built.
+      - name: 'Pull the image'
+        env:
+          TAG: ${{ env.IMAGE }}:${{ matrix.magento }}-php${{ matrix.php }}
+        shell: bash
+        #language=bash
+        run: |
+          source="$IMAGE@$(cat "$RUNNER_TEMP/digest/digest")"
+          docker pull "$source"
+          docker tag "$source" "$TAG"
+
+      - name: 'Smoke test'
+        env:
+          MAGENTO: ${{ matrix.magento }}
+          PHP: ${{ matrix.php }}
+          WITH_SEED: ${{ matrix.with_seed }}
+        shell: bash
+        #language=bash
+        run: bash images/magento/tests/smoke.sh run "$MAGENTO" "$PHP"
+
+      # The promote job tags only an image whose smoke tests all passed
+      - name: 'Record the passed smoke test'
+        shell: bash
+        run: touch "$RUNNER_TEMP/smoke-passed"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: smoke-passed-${{ matrix.magento }}-php${{ matrix.php }}-seed${{ matrix.with_seed }}
+          path: ${{ runner.temp }}/smoke-passed
+          if-no-files-found: error
+          retention-days: 1
+
+  # Moves the user tags to the image of this run, only when every smoke test of the pair passed.
+  promote:
+    name: 'promote (${{ matrix.magento }}, ${{ matrix.php }})'
+    runs-on: ubuntu-22.04
+    needs:
+      - prepare
+      - smoke
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.prepare.result == 'success' }}
+    # INT-2362, see the build job
+    continue-on-error: ${{ matrix.allow_failure }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.build) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/login-ghcr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: digest-${{ matrix.magento }}-php${{ matrix.php }}
+          path: ${{ runner.temp }}/digest
+
+      # A failed smoke test uploads no artifact. The next step counts the artifacts, so a download error only
+      # gives a lower count.
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          pattern: smoke-passed-${{ matrix.magento }}-php${{ matrix.php }}-*
+          path: ${{ runner.temp }}/smoke-passed
+
+      - name: 'Tag the tested image'
+        env:
+          EXPECTED: ${{ matrix.minor == env.NO_SEED_MINOR && matrix.php == env.NO_SEED_PHP && 2 || 1 }}
+          EXACT: ${{ env.IMAGE }}:${{ matrix.magento }}-php${{ matrix.php }}
+          FLOATING: ${{ env.IMAGE }}:${{ matrix.minor }}-php${{ matrix.php }}
+        shell: bash
+        #language=bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/smoke-passed"
+          passed=$(find "$RUNNER_TEMP/smoke-passed" -type f -name smoke-passed | wc -l)
+          if [ "$passed" -ne "$EXPECTED" ]; then
+            echo "::error::$passed of $EXPECTED smoke tests passed. The tags stay on the previous image."
+            exit 1
+          fi
+
+          tags=("$EXACT")
+          [ "$FLOATING" = "$EXACT" ] || tags+=("$FLOATING")
+          args=()
+          for tag in "${tags[@]}"; do
+            args+=(--tag "$tag")
+          done
+          docker buildx imagetools create "${args[@]}" "$IMAGE@$(cat "$RUNNER_TEMP/digest/digest")"
+          printf 'Tagged `%s`\n' "${tags[@]#*:}" >> "$GITHUB_STEP_SUMMARY"
+
+  notify-on-failure:
+    needs:
+      - prepare
+      - build
+      - smoke
+      - promote
+    if: always() && contains(needs.*.result, 'failure')
+    uses: myparcelnl/actions/.github/workflows/notify-on-failure.yml@v6
+    secrets: inherit

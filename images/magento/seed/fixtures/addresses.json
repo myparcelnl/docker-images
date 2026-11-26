@@ -1,0 +1,191 @@
+[
+  {
+    "id": "nl-1",
+    "country": "NL",
+    "street": ["Amstel"],
+    "house_number": "1",
+    "postcode": "1011 PN",
+    "city": "Amsterdam",
+    "telephone": "+31612345678",
+    "label": "Stadhuis Amsterdam"
+  },
+  {
+    "id": "nl-2",
+    "country": "NL",
+    "street": ["Museumstraat"],
+    "house_number": "1",
+    "postcode": "1071 XX",
+    "city": "Amsterdam",
+    "telephone": "+31612345678",
+    "label": "Rijksmuseum"
+  },
+  {
+    "id": "nl-3",
+    "country": "NL",
+    "street": ["Oosterdokskade"],
+    "house_number": "143",
+    "postcode": "1011 DL",
+    "city": "Amsterdam",
+    "telephone": "+31612345678",
+    "label": "Centrale Bibliotheek OBA"
+  },
+  {
+    "id": "be-1",
+    "country": "BE",
+    "street": ["Burg"],
+    "house_number": "12",
+    "postcode": "8000",
+    "city": "Brugge",
+    "region": "West-Vlaanderen",
+    "telephone": "+32470123456",
+    "label": "Stadhuis Brugge"
+  },
+  {
+    "id": "be-2",
+    "country": "BE",
+    "street": ["Koningin Astridplein"],
+    "house_number": "27",
+    "postcode": "2018",
+    "city": "Antwerpen",
+    "region": "Antwerpen",
+    "telephone": "+32470123456",
+    "label": "Station Antwerpen-Centraal"
+  },
+  {
+    "id": "be-3",
+    "country": "BE",
+    "street": ["Botermarkt"],
+    "house_number": "1",
+    "postcode": "9000",
+    "city": "Gent",
+    "region": "Oost-Vlaanderen",
+    "telephone": "+32470123456",
+    "label": "Stadhuis Gent"
+  },
+  {
+    "id": "de-1",
+    "country": "DE",
+    "street": ["Rathausstraße"],
+    "house_number": "15",
+    "postcode": "10178",
+    "city": "Berlin",
+    "telephone": "+4915123456789",
+    "label": "Rotes Rathaus"
+  },
+  {
+    "id": "de-2",
+    "country": "DE",
+    "street": ["Marienplatz"],
+    "house_number": "8",
+    "postcode": "80331",
+    "city": "München",
+    "telephone": "+4915123456789",
+    "label": "Neues Rathaus München"
+  },
+  {
+    "id": "de-3",
+    "country": "DE",
+    "street": ["Rathausmarkt"],
+    "house_number": "1",
+    "postcode": "20095",
+    "city": "Hamburg",
+    "telephone": "+4915123456789",
+    "label": "Rathaus Hamburg"
+  },
+  {
+    "id": "fr-1",
+    "country": "FR",
+    "street": ["Place de l'Hôtel de Ville"],
+    "house_number": "4",
+    "postcode": "75004",
+    "city": "Paris",
+    "telephone": "+33612345678",
+    "label": "Hôtel de Ville de Paris"
+  },
+  {
+    "id": "fr-2",
+    "country": "FR",
+    "street": ["Quai François Mauriac"],
+    "house_number": "11",
+    "postcode": "75013",
+    "city": "Paris",
+    "telephone": "+33612345678",
+    "label": "Bibliothèque nationale de France"
+  },
+  {
+    "id": "fr-3",
+    "country": "FR",
+    "street": ["Place de la Comédie"],
+    "house_number": "1",
+    "postcode": "69001",
+    "city": "Lyon",
+    "telephone": "+33612345678",
+    "label": "Hôtel de Ville de Lyon"
+  },
+  {
+    "id": "it-1",
+    "country": "IT",
+    "street": ["Piazza della Scala"],
+    "house_number": "2",
+    "postcode": "20121",
+    "city": "Milano",
+    "region": "Milano",
+    "telephone": "+393123456789",
+    "label": "Palazzo Marino"
+  },
+  {
+    "id": "it-2",
+    "country": "IT",
+    "street": ["Piazza del Campidoglio"],
+    "house_number": "1",
+    "postcode": "00186",
+    "city": "Roma",
+    "region": "Roma",
+    "telephone": "+393123456789",
+    "label": "Palazzo Senatorio"
+  },
+  {
+    "id": "it-3",
+    "country": "IT",
+    "street": ["Piazzale degli Uffizi"],
+    "house_number": "6",
+    "postcode": "50122",
+    "city": "Firenze",
+    "region": "Firenze",
+    "telephone": "+393123456789",
+    "label": "Galleria degli Uffizi"
+  },
+  {
+    "id": "us-1",
+    "country": "US",
+    "street": ["North LaSalle Street"],
+    "house_number": "121",
+    "postcode": "60602",
+    "city": "Chicago",
+    "region": "Illinois",
+    "telephone": "+12015550123",
+    "label": "Chicago City Hall"
+  },
+  {
+    "id": "us-2",
+    "country": "US",
+    "street": ["Boylston Street"],
+    "house_number": "700",
+    "postcode": "02116",
+    "city": "Boston",
+    "region": "Massachusetts",
+    "telephone": "+12015550123",
+    "label": "Boston Public Library"
+  },
+  {
+    "id": "us-3",
+    "country": "US",
+    "street": ["John F Kennedy Boulevard"],
+    "house_number": "1400",
+    "postcode": "19107",
+    "city": "Philadelphia",
+    "region": "Pennsylvania",
+    "telephone": "+12015550123",
+    "label": "Philadelphia City Hall"
+  }
+]

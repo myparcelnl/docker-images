@@ -1,0 +1,15 @@
+# Magento site for the nginx:alpine web container. TLS ends at Traefik or the load balancer; nginx serves only http.
+# No HTTPS fastcgi_param: Magento's default web/secure/offloader_header is X-Forwarded-Proto, which nginx passes to PHP.
+upstream fastcgi_backend {
+  server php:9000;
+}
+
+server {
+  listen 80 default_server;
+  server_name _;
+
+  set $MAGE_ROOT /var/www/html;
+
+  # In the web-data volume after the php container synced the code
+  include /var/www/html/nginx.conf.sample;
+}
