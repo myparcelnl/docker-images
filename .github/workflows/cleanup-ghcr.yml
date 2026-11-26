@@ -8,7 +8,7 @@ on:
         type: boolean
         default: true
 
-  # Mondays after the weekly php-xd build and the wordpress builds that follow it.
+  # Mondays after the weekly php-xd build and the wordpress builds that follow it. The magento build can still run.
   schedule:
     - cron: '0 9 * * 1'
 
@@ -62,5 +62,30 @@ jobs:
           package: wordpress
           delete-untagged: true
           delete-tags: ${{ steps.stale.outputs.tags }}
+          validate: true
+          dry-run: ${{ env.DRY_RUN }}
+
+  magento:
+    runs-on: ubuntu-22.04
+    steps:
+      # older-than keeps the images of a build-magento.yml run that still runs (it starts at 03:00 on Monday).
+      # Run tags (ci-<run>-…) stay when the smoke test failed; the label pass and a new build leave untagged images.
+      - uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          package: magento
+          delete-untagged: true
+          delete-tags: '^ci-\d+-'
+          use-regex: true
+          older-than: 1 day
+          validate: true
+          dry-run: ${{ env.DRY_RUN }}
+
+      # Branch tags (<branch>-<magento>-php<php>). The lookahead skips the user tags (<magento>-php<php>, <minor>-php<php>); a branch name may start with a digit.
+      - uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          package: magento
+          delete-tags: '^(?!\d+\.\d+\.\d+(-p\d+)?-php|\d+\.\d+-php|ci-\d+-).+-\d+\.\d+\.\d+(-p\d+)?-php\d+\.\d+$'
+          use-regex: true
+          older-than: 2 weeks
           validate: true
           dry-run: ${{ env.DRY_RUN }}

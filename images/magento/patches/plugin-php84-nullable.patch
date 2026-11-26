@@ -1,0 +1,26 @@
+diff --git a/src/Observer/CreateConceptAfterInvoice.php b/src/Observer/CreateConceptAfterInvoice.php
+index 35aad9f4d..98aa4d606 100644
+--- a/src/Observer/CreateConceptAfterInvoice.php
++++ b/src/Observer/CreateConceptAfterInvoice.php
+@@ -44,7 +44,7 @@ class CreateConceptAfterInvoice implements ObserverInterface
+      *
+      * @param MagentoOrderCollection|null $orderCollection
+      */
+-    public function __construct(MagentoOrderCollection $orderCollection = null)
++    public function __construct(?MagentoOrderCollection $orderCollection = null)
+     {
+         $this->objectManager   = $objectManager = ObjectManager::getInstance();
+         $request               = $objectManager->get(RequestInterface::class);
+diff --git a/src/Observer/NewShipment.php b/src/Observer/NewShipment.php
+index 65f6fb5ef..de773d05f 100755
+--- a/src/Observer/NewShipment.php
++++ b/src/Observer/NewShipment.php
+@@ -41,7 +41,7 @@ class NewShipment implements ObserverInterface
+      *
+      * @param MagentoOrderCollection|null $orderCollection
+      */
+-    public function __construct(MagentoOrderCollection $orderCollection = null)
++    public function __construct(?MagentoOrderCollection $orderCollection = null)
+     {
+         $this->objectManager   = ObjectManager::getInstance();
+         $this->request         = $this->objectManager->get(RequestInterface::class);

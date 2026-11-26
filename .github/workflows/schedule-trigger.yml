@@ -15,6 +15,7 @@ jobs:
       matrix:
         image:
           - elasticsearch
+          - magento
           - php-xd
           - wordpress
     steps:

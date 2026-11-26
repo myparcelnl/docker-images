@@ -16,6 +16,7 @@ on:
         type: choice
         options:
           - elasticsearch
+          - magento
           - php-xd
           - wordpress
 
@@ -26,6 +27,7 @@ jobs:
       matrix:
         image:
           - elasticsearch
+          - magento
           - php-xd
           - wordpress
     steps:
@@ -38,7 +40,7 @@ jobs:
           files: 'images/${{ matrix.image }}/**'
 
       - name: 'Prepare'
-        if: steps.changed-files.outputs.test_any_changed == 'true' || inputs.image == matrix.image
+        if: steps.changed-files.outputs.any_changed == 'true' || inputs.image == matrix.image
         id: prepare
         env:
           IMAGE: ${{ matrix.image }}

@@ -1,0 +1,418 @@
+[
+  {
+    "sku": "MP-001",
+    "name": "Package 1kg age check off",
+    "weight_grams": 1000,
+    "price": 19.95,
+    "hs_code": "4901990000",
+    "attributes": {
+      "myparcel_classification": "4901990000",
+      "myparcel_age_check": "0"
+    }
+  },
+  {
+    "sku": "MP-002",
+    "name": "Package 1kg age check on",
+    "weight_grams": 1000,
+    "price": 24.95,
+    "hs_code": "2203000100",
+    "attributes": {
+      "myparcel_classification": "2203000100",
+      "myparcel_age_check": "1"
+    }
+  },
+  {
+    "sku": "MP-003",
+    "name": "Package 1kg age check default",
+    "weight_grams": 1000,
+    "price": 17.95,
+    "hs_code": "6109100010",
+    "attributes": {"myparcel_classification": "6109100010"}
+  },
+  {
+    "sku": "MP-004",
+    "name": "Package 2kg age check on",
+    "weight_grams": 2000,
+    "price": 34.95,
+    "hs_code": "2203000100",
+    "attributes": {
+      "myparcel_classification": "2203000100",
+      "myparcel_age_check": "1"
+    }
+  },
+  {
+    "sku": "MP-005",
+    "name": "Package 0.5kg standard",
+    "weight_grams": 500,
+    "price": 14.95,
+    "hs_code": "6110209100",
+    "attributes": {"myparcel_classification": "6110209100"}
+  },
+  {
+    "sku": "MP-006",
+    "name": "Package 3kg standard",
+    "weight_grams": 3000,
+    "price": 59.95,
+    "hs_code": "7323939000",
+    "attributes": {"myparcel_classification": "7323939000"}
+  },
+  {
+    "sku": "MP-007",
+    "name": "Package 4.5kg large format",
+    "weight_grams": 4500,
+    "price": 89.95,
+    "hs_code": "9401690000",
+    "attributes": {"myparcel_classification": "9401690000"}
+  },
+  {
+    "sku": "MP-008",
+    "name": "Package 10kg heavy",
+    "weight_grams": 10000,
+    "price": 149.0,
+    "hs_code": "9506919000",
+    "attributes": {"myparcel_classification": "9506919000"}
+  },
+  {
+    "sku": "MP-009",
+    "name": "Package 20kg heavy",
+    "weight_grams": 20000,
+    "price": 249.0,
+    "hs_code": "9506919000",
+    "attributes": {"myparcel_classification": "9506919000"}
+  },
+  {
+    "sku": "MP-010",
+    "name": "Package 2kg excluded from parcel lockers",
+    "weight_grams": 2000,
+    "price": 899.0,
+    "hs_code": "8471300000",
+    "attributes": {
+      "myparcel_classification": "8471300000",
+      "myparcel_exclude_parcel_lockers": 1
+    }
+  },
+  {
+    "sku": "MP-011",
+    "name": "Package 1kg excluded from parcel lockers age check on",
+    "weight_grams": 1000,
+    "price": 29.95,
+    "hs_code": "2203000100",
+    "attributes": {
+      "myparcel_classification": "2203000100",
+      "myparcel_exclude_parcel_lockers": 1,
+      "myparcel_age_check": "1"
+    }
+  },
+  {
+    "sku": "MP-012",
+    "name": "Package 1kg priority delivery",
+    "weight_grams": 1000,
+    "price": 79.0,
+    "hs_code": "8518309500",
+    "attributes": {
+      "myparcel_classification": "8518309500",
+      "myparcel_priority_delivery": 1
+    }
+  },
+  {
+    "sku": "MP-013",
+    "name": "Package 1kg priority delivery age check on",
+    "weight_grams": 1000,
+    "price": 31.95,
+    "hs_code": "2203000100",
+    "attributes": {
+      "myparcel_classification": "2203000100",
+      "myparcel_priority_delivery": 1,
+      "myparcel_age_check": "1"
+    }
+  },
+  {
+    "sku": "MP-014",
+    "name": "Package 1kg disable checkout",
+    "weight_grams": 1000,
+    "price": 12.95,
+    "hs_code": "6307909800",
+    "attributes": {
+      "myparcel_classification": "6307909800",
+      "myparcel_disable_checkout": 1
+    }
+  },
+  {
+    "sku": "MP-015",
+    "name": "Package 1kg dropoff delay 0 days",
+    "weight_grams": 1000,
+    "price": 9.95,
+    "hs_code": "3401110000",
+    "attributes": {
+      "myparcel_classification": "3401110000",
+      "myparcel_dropoff_delay": "0"
+    }
+  },
+  {
+    "sku": "MP-016",
+    "name": "Package 1kg dropoff delay 1 day",
+    "weight_grams": 1000,
+    "price": 10.95,
+    "hs_code": "3401110000",
+    "attributes": {
+      "myparcel_classification": "3401110000",
+      "myparcel_dropoff_delay": "1"
+    }
+  },
+  {
+    "sku": "MP-017",
+    "name": "Package 1kg dropoff delay 2 days",
+    "weight_grams": 1000,
+    "price": 11.95,
+    "hs_code": "3401110000",
+    "attributes": {
+      "myparcel_classification": "3401110000",
+      "myparcel_dropoff_delay": "2"
+    }
+  },
+  {
+    "sku": "MP-018",
+    "name": "Package 1kg dropoff delay 3 days",
+    "weight_grams": 1000,
+    "price": 12.95,
+    "hs_code": "3303009000",
+    "attributes": {
+      "myparcel_classification": "3303009000",
+      "myparcel_dropoff_delay": "3"
+    }
+  },
+  {
+    "sku": "MP-019",
+    "name": "Package 1kg dropoff delay 5 days",
+    "weight_grams": 1000,
+    "price": 14.95,
+    "hs_code": "0901210000",
+    "attributes": {
+      "myparcel_classification": "0901210000",
+      "myparcel_dropoff_delay": "5"
+    }
+  },
+  {
+    "sku": "MP-020",
+    "name": "Package 1kg dropoff delay 14 days",
+    "weight_grams": 1000,
+    "price": 23.95,
+    "hs_code": "0902100000",
+    "attributes": {
+      "myparcel_classification": "0902100000",
+      "myparcel_dropoff_delay": "14"
+    }
+  },
+  {
+    "sku": "MP-021",
+    "name": "Mailbox 10 fit 100gr",
+    "weight_grams": 100,
+    "price": 4.95,
+    "hs_code": "9608109200",
+    "attributes": {
+      "myparcel_classification": "9608109200",
+      "myparcel_fit_in_mailbox": "10"
+    }
+  },
+  {
+    "sku": "MP-022",
+    "name": "Mailbox fit off 100gr",
+    "weight_grams": 100,
+    "price": 59.0,
+    "hs_code": "9004109100",
+    "attributes": {
+      "myparcel_classification": "9004109100",
+      "myparcel_fit_in_mailbox": "101"
+    }
+  },
+  {
+    "sku": "MP-023",
+    "name": "Mailbox 1 fit 100gr",
+    "weight_grams": 100,
+    "price": 4.95,
+    "hs_code": "4901990000",
+    "attributes": {
+      "myparcel_classification": "4901990000",
+      "myparcel_fit_in_mailbox": "100"
+    }
+  },
+  {
+    "sku": "MP-024",
+    "name": "Mailbox 2 fit 250gr",
+    "weight_grams": 250,
+    "price": 5.95,
+    "hs_code": "6115950000",
+    "attributes": {
+      "myparcel_classification": "6115950000",
+      "myparcel_fit_in_mailbox": "50"
+    }
+  },
+  {
+    "sku": "MP-025",
+    "name": "Mailbox 3 fit 300gr",
+    "weight_grams": 300,
+    "price": 6.95,
+    "hs_code": "4203300000",
+    "attributes": {
+      "myparcel_classification": "4203300000",
+      "myparcel_fit_in_mailbox": "33"
+    }
+  },
+  {
+    "sku": "MP-026",
+    "name": "Mailbox 4 fit 150gr",
+    "weight_grams": 150,
+    "price": 7.95,
+    "hs_code": "8544429000",
+    "attributes": {
+      "myparcel_classification": "8544429000",
+      "myparcel_fit_in_mailbox": "25"
+    }
+  },
+  {
+    "sku": "MP-027",
+    "name": "Mailbox 5 fit 80gr",
+    "weight_grams": 80,
+    "price": 8.95,
+    "hs_code": "7117190000",
+    "attributes": {
+      "myparcel_classification": "7117190000",
+      "myparcel_fit_in_mailbox": "20"
+    }
+  },
+  {
+    "sku": "MP-028",
+    "name": "Mailbox 6 fit 60gr",
+    "weight_grams": 60,
+    "price": 9.95,
+    "hs_code": "8504403000",
+    "attributes": {
+      "myparcel_classification": "8504403000",
+      "myparcel_fit_in_mailbox": "16"
+    }
+  },
+  {
+    "sku": "MP-029",
+    "name": "Mailbox 7 fit 40gr",
+    "weight_grams": 40,
+    "price": 10.95,
+    "hs_code": "3305100000",
+    "attributes": {
+      "myparcel_classification": "3305100000",
+      "myparcel_fit_in_mailbox": "14"
+    }
+  },
+  {
+    "sku": "MP-030",
+    "name": "Mailbox 8 fit 30gr",
+    "weight_grams": 30,
+    "price": 11.95,
+    "hs_code": "2106909800",
+    "attributes": {
+      "myparcel_classification": "2106909800",
+      "myparcel_fit_in_mailbox": "12"
+    }
+  },
+  {
+    "sku": "MP-031",
+    "name": "Mailbox 9 fit 30gr",
+    "weight_grams": 30,
+    "price": 12.95,
+    "hs_code": "1806329000",
+    "attributes": {
+      "myparcel_classification": "1806329000",
+      "myparcel_fit_in_mailbox": "11"
+    }
+  },
+  {
+    "sku": "MP-032",
+    "name": "Mailbox 20 fit 20gr",
+    "weight_grams": 20,
+    "price": 23.95,
+    "hs_code": "9608109200",
+    "attributes": {
+      "myparcel_classification": "9608109200",
+      "myparcel_fit_in_mailbox": "5"
+    }
+  },
+  {
+    "sku": "MP-033",
+    "name": "Mailbox look to weight 200gr",
+    "weight_grams": 200,
+    "price": 8.95,
+    "hs_code": "9405210000",
+    "attributes": {
+      "myparcel_classification": "9405210000",
+      "myparcel_fit_in_mailbox": "0"
+    }
+  },
+  {
+    "sku": "MP-034",
+    "name": "Mailbox 10 fit age check on 100gr",
+    "weight_grams": 100,
+    "price": 6.95,
+    "hs_code": "4813100000",
+    "attributes": {
+      "myparcel_classification": "4813100000",
+      "myparcel_fit_in_mailbox": "10",
+      "myparcel_age_check": "1"
+    }
+  },
+  {
+    "sku": "MP-035",
+    "name": "Mailbox 1 fit disable checkout 100gr",
+    "weight_grams": 100,
+    "price": 7.95,
+    "hs_code": "9503007000",
+    "attributes": {
+      "myparcel_classification": "9503007000",
+      "myparcel_fit_in_mailbox": "100",
+      "myparcel_disable_checkout": 1
+    }
+  },
+  {
+    "sku": "MP-036",
+    "name": "Mailbox 1 fit priority delivery 100gr",
+    "weight_grams": 100,
+    "price": 9.95,
+    "hs_code": "6115950000",
+    "attributes": {
+      "myparcel_classification": "6115950000",
+      "myparcel_fit_in_mailbox": "100",
+      "myparcel_priority_delivery": 1
+    }
+  },
+  {
+    "sku": "MP-037",
+    "name": "Digital stamp 20gr",
+    "weight_grams": 20,
+    "price": 2.95,
+    "hs_code": "4909000000",
+    "attributes": {
+      "myparcel_classification": "4909000000",
+      "myparcel_digital_stamp": 1
+    }
+  },
+  {
+    "sku": "MP-038",
+    "name": "Digital stamp 50gr",
+    "weight_grams": 50,
+    "price": 3.95,
+    "hs_code": "4902900000",
+    "attributes": {
+      "myparcel_classification": "4902900000",
+      "myparcel_digital_stamp": 1
+    }
+  },
+  {
+    "sku": "MP-039",
+    "name": "Digital stamp 100gr",
+    "weight_grams": 100,
+    "price": 4.95,
+    "hs_code": "4909000000",
+    "attributes": {
+      "myparcel_classification": "4909000000",
+      "myparcel_digital_stamp": 1
+    }
+  }
+]

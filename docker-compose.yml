@@ -13,3 +13,13 @@ services:
       args:
         WP_VERSION: ${WP_VERSION}
         PHP_VERSION: ${WP_PHP_VERSION}
+
+  # For 2.4.6 and 2.4.7, use images/magento/tests/smoke.sh build: it reads the accepted advisories from versions.json.
+  magento:
+    image: ghcr.io/myparcelnl/magento:${MAGENTO_VERSION:-2.4.8-p5}-php${MAGENTO_PHP_VERSION:-8.3}
+    build:
+      context: images/magento
+      args:
+        MAGENTO_VERSION: ${MAGENTO_VERSION:-2.4.8-p5}
+        PHP_VERSION: ${MAGENTO_PHP_VERSION:-8.3}
+        ACCEPTED_ADVISORIES: ${MAGENTO_ACCEPTED_ADVISORIES:-[]}

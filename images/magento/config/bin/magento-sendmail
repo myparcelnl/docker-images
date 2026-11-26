@@ -1,0 +1,8 @@
+#!/bin/sh
+# PHP sendmail_path. Sends to $SMTP_HOST:1025 (for example mailhog). Without SMTP_HOST the mail is discarded.
+if [ -z "${SMTP_HOST:-}" ]; then
+  cat >/dev/null
+  exit 0
+fi
+
+exec msmtp --host="$SMTP_HOST" --port=1025 --auth=off --tls=off --from=magento@example.com --read-envelope-from --read-recipients "$@"

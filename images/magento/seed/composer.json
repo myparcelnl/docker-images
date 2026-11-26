@@ -1,0 +1,35 @@
+{
+  "name": "myparcelnl/magento-dev-seed",
+  "description": "Seed data (websites, products, customers, delivery costs matrix, orders) for the MyParcel Magento dev image.",
+  "type": "magento2-module",
+  "license": "proprietary",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://mirror.mage-os.org/"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "MyParcelNL\\DevSeed\\": ""
+    }
+  },
+  "require-dev": {
+    "myparcelnl/magento": "*",
+    "pestphp/pest": "^2",
+    "mockery/mockery": "^1.6",
+    "giggsey/libphonenumber-for-php": "^8"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "magento/composer-dependency-version-audit-plugin": true,
+      "magento/magento-composer-installer": true
+    }
+  },
+  "minimum-stability": "beta",
+  "prefer-stable": true
+}
